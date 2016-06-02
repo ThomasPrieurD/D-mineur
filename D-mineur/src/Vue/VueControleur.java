@@ -4,9 +4,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package src.mvc;
+package Vue;
 
 
+import Modele.Modele;
 import java.util.Observable;
 import java.util.Observer;
 import javafx.application.Application;
@@ -37,7 +38,7 @@ public class VueControleur extends Application {
     // modèle : ce qui réalise le calcule de l'expression
     Modele m;
     // affiche la saisie et le résultat
-    Text affichage;
+    GameBoard;
     
     @Override
     public void start(Stage primaryStage) {

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package src.mvc;
+package Modele;
 
 import java.util.Observable;
 import src.mvc.libInterpreteurExpr.Node;
@@ -14,9 +14,20 @@ import src.mvc.libInterpreteurExpr.Node;
  */
 public class Modele extends Observable {
 
-    double lastValue;
-    boolean err = false;
+    private double lastValue;
+    private boolean err = false;
+    private Byte[][][] GameBoard;
+    private int nbmines;
 
+    public Modele(int height,int width,int nbMines){
+        
+        for(int i=0;i<height;i++){
+            for(int j=0;j<width;j++){
+                GameBoard[i][j][0]
+            }
+        }
+    }
+    
     
     
     public void calc(String expr) {
