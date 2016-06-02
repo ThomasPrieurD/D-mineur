@@ -5,6 +5,7 @@
  */
 package Modele;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -29,5 +30,27 @@ public class Grille {
         }
     }
     
+    public ArrayList<Integer> voisins(int k){
+        ArrayList<Integer> vois = new ArrayList<Integer>();
+        switch(forme){
+            case 0: vois = voisinsRect(k);
+        }
+        return vois;
+    }
     
+    
+    public ArrayList<Integer> voisinsRect(int k){
+        ArrayList<Integer> vois = new ArrayList<Integer>();
+        int y = k/dim[0];
+        int x = (k-y)/dim[0];
+        for (int i = -1; i <=1; i++){
+            for (int j = -1; j <=1; j++){
+                if ((x+i>=0) && (x+i<dim[0]) && (y+j>=0) && (y+j<dim[1]) && 
+                        !((i==0) && (j==0))){
+                    vois.add((x+i)*dim[0]+(y+j));
+                }
+            }
+        }
+        return vois;
+    }
 }

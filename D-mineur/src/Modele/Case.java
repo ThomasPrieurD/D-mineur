@@ -29,6 +29,15 @@ public class Case {
     public void placeMine() {
         this.mine = true;
     }
+
+    public int getEtat() {
+        return etat;
+    }
+
+    public boolean isMine() {
+        return mine;
+    }
+    
     
     
 }
