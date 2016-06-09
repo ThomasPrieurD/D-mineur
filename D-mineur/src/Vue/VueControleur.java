@@ -50,7 +50,7 @@ public class VueControleur extends Application {
         
         // initialisation du modèle que l'on souhaite utiliser
         int[] dimension = {20,20};
-        grille = new Grille(0,dimension,20);
+        grille = new Grille(0,dimension,200);
         
         // gestion du placement (permet de palcer le champ Text affichage en haut, et GridPane gPane au centre)
         BorderPane border = new BorderPane();
@@ -81,7 +81,7 @@ public class VueControleur extends Application {
                             break;
                         case 2:layer.setFill(Color.RED);
                             break;
-                        case 3:layer.setFill(Color.BLUE);
+                        case 3:layer.setFill(Color.GREEN);
                             break;
                         default:layer.setFill(Color.GREY);
                             break;

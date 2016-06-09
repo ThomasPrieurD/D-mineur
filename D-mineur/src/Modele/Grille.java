@@ -80,19 +80,22 @@ public class Grille  extends Observable{
     
     
     public void clicG(int k){
-        if (cases.get(k).isMine()){
-            this.gameState = 2;
+        if(cases.get(k).getEtat() == 0){
+            if (cases.get(k).isMine()){
+                this.gameState = 2;
+                this.cases.get(k).setEtat(3);
+            }
+            else{
+                clicGNoUpdate(k);
+
+            }
+            setChanged();
+            notifyObservers();
         }
-        else{
-            clicGNoUpdate(k);
-            
-        }
-        setChanged();
-        notifyObservers();
     }
     
     public void clicGNoUpdate(int k){
-        
+        this.cases.get(k).setEtat(1);
         ArrayList<Integer> vois = voisins(k);
         int mineVois = 0;
         for (int i=0; i<vois.size(); i++){
