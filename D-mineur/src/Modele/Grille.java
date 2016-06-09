@@ -7,27 +7,28 @@ package Modele;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Observable;
 import java.util.Random;
 
 /**
  *
  * @author theo
  */
-public class Grille {
-    private HashMap<Integer,Case> grille;
+public class Grille  extends Observable{
+    private HashMap<Integer,Case> cases;
     private int forme; // 0: classique
     private int[] dim;
     private int mines;
 
-    public Grille(HashMap<Integer, Case> grille, int forme, int[] dim, int mines) {
-        this.grille = grille;
+    public Grille(int forme, int[] dim, int mines) {
+        this.cases = new HashMap<>();
         this.forme = forme;
         this.dim = dim;
         this.mines = mines;
         int k=0;
         for(int i=0;i<dim.length;i++){
             for(int j=0;j<dim[i];j++){
-                grille.put(k, new Case());
+                this.cases.put(k, new Case());
                 k++;
             }
         }
@@ -36,9 +37,9 @@ public class Grille {
         Random rand = new Random();
         int test;
         while (minesAPlacer > 0){
-            test = rand.nextInt(this.grille.size());
-            if (!this.grille.get(test).isMine()){
-                this.grille.get(test).placeMine();
+            test = rand.nextInt(this.cases.size());
+            if (!this.cases.get(test).isMine()){
+                this.cases.get(test).placeMine();
                 minesAPlacer--;
             }
         }
@@ -70,28 +71,44 @@ public class Grille {
     
     
     public void clicG(int k){
-        if (grille.get(k).isMine()){
+        if (cases.get(k).isMine()){
             //gameOver();
         }
         else{
             ArrayList<Integer> vois = voisins(k);
             int mineVois = 0;
             for (int i=0; i<vois.size(); i++){
-                if (grille.get(vois.get(i)).isMine())
+                if (cases.get(vois.get(i)).isMine())
                     mineVois++;
             }
-            grille.get(k).setNbMineVois(mineVois);
+            cases.get(k).setNbMineVois(mineVois);
             //update(k,mineVois); // met à jour l'affichage de la case k
             if (mineVois == 0)
                 for (int i=0; i<vois.size(); i++)
                     clicG(vois.get(i));
         }
+        setChanged();
+        notifyObservers();
     }
     
     public void clicD(int k){
-        if (this.grille.get(k).getEtat() == 0)
-            this.grille.get(k).setEtat(2);
-        if (this.grille.get(k).getEtat() == 2)
-            this.grille.get(k).setEtat(0);
+        if (this.cases.get(k).getEtat() == 0)
+            this.cases.get(k).setEtat(2);
+        if (this.cases.get(k).getEtat() == 2)
+            this.cases.get(k).setEtat(0);
+        setChanged();
+        notifyObservers();
+    }
+
+    public int[] getDim() {
+        return dim;
+    }
+
+    public HashMap<Integer, Case> getCases() {
+        return cases;
+    }
+    
+    public Case getCase(int i){
+        return cases.get(i);
     }
 }

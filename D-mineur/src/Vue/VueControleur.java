@@ -7,6 +7,7 @@
 package Vue;
 
 
+import Modele.Grille;
 import Modele.Modele;
 import java.util.ArrayList;
 import java.util.Observable;
@@ -20,6 +21,7 @@ import javafx.scene.effect.Blend;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
 import javafx.scene.effect.Shadow;
+import javafx.scene.input.MouseButton;
 
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -40,13 +42,15 @@ import javafx.scene.text.TextAlignment;
 public class VueControleur extends Application {
     
     // modèle : ce qui réalise le calcule de l'expression
-    Modele m;
+    Grille grille;
+    ArrayList cases = new ArrayList();
     
     @Override
     public void start(Stage primaryStage) {
         
         // initialisation du modèle que l'on souhaite utiliser
-        m = new Modele(20,20,20);
+        int[] dimension = {20,20};
+        grille = new Grille(0,dimension,20);
         
         // gestion du placement (permet de palcer le champ Text affichage en haut, et GridPane gPane au centre)
         BorderPane border = new BorderPane();
@@ -64,14 +68,24 @@ public class VueControleur extends Application {
         border.setTop(affichage);*/
         
         // la vue observe les "update" du modèle, et réalise les mises à jour graphiques
-        m.addObserver(new Observer() {
+        grille.addObserver(new Observer() {
             
             @Override
             public void update(Observable o, Object arg) {
-                if (!m.getErr()) {
-                    //affichage.setText(m.getValue() + "");
-                } else {
-                    //affichage.setText("Err");
+                for(int i=0;i<grille.getDim()[0]*grille.getDim()[1];i++){
+                    Rectangle layer = (Rectangle)cases.get(i);
+                    switch(grille.getCase(i).getEtat()){
+                        case 0: layer.setFill(Color.GREY);
+                            break;
+                        case 1:layer.setFill(Color.BLUE);
+                            break;
+                        case 2:layer.setFill(Color.RED);
+                            break;
+                        case 3:layer.setFill(Color.BLUE);
+                            break;
+                        default:layer.setFill(Color.GREY);
+                            break;
+                    }
                 }
             }
         });
@@ -87,13 +101,15 @@ public class VueControleur extends Application {
         });
         */
         // création des bouton et placement dans la grille
-        ArrayList cases = new ArrayList();
-        for (int i=0;i<100;i++) {
-            Node layer2 = new Rectangle(10, 10, Color.FIREBRICK);
+        
+        for (int i=0;i<400;i++) {
+            Rectangle layer2 = new Rectangle(30, 30, Color.GREY);
+            layer2.setArcWidth(10);
+            layer2.setArcHeight(10);
             cases.add(layer2);
             gPane.add(layer2, column++, row);
             
-            if (column > 9) {
+            if (column > 19) {
                 column = 0;
                 row++;
                 
@@ -104,7 +120,13 @@ public class VueControleur extends Application {
                 
                 @Override
                 public void handle(MouseEvent event) {
-                    //affichage.setText(affichage.getText() + t.getText());
+                    int indice = (int)layer2.getX()*grille.getDim()[1]+(int)layer2.getY();
+                    if(event.getButton()==MouseButton.PRIMARY){
+                        grille.clicG(indice);
+                    }
+                    else{
+                        grille.clicD(indice);
+                    }
                 }
                 
             });
@@ -117,7 +139,7 @@ public class VueControleur extends Application {
         
         border.setCenter(gPane);
         
-        Scene scene = new Scene(border, Color.GREY);
+        Scene scene = new Scene(border, Color.BLACK);
         
         primaryStage.setTitle("Calc FX");
         primaryStage.setScene(scene);
