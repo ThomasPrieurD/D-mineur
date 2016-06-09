@@ -10,12 +10,14 @@ package Modele;
  * @author theo
  */
 public class Case {
-    private int etat;
+    private int etat; // 0: non cliquée; 1: cliquée; 2: drapeau; 3: mine visible
     private boolean mine;
+    private int nbMineVois;
 
     public Case(int etat, boolean mine) {
         this.etat = etat;
         this.mine = mine;
+        this.nbMineVois = 0;
     }
     
     public Case() {
@@ -36,6 +38,14 @@ public class Case {
 
     public boolean isMine() {
         return mine;
+    }
+
+    public int getNbMineVois() {
+        return nbMineVois;
+    }
+
+    public void setNbMineVois(int nbMineVois) {
+        this.nbMineVois = nbMineVois;
     }
     
     
