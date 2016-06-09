@@ -112,10 +112,13 @@ public class Grille  extends Observable{
             this.cases.get(k).setEtat(2);
             this.minesRest--;
         }
-        if (this.cases.get(k).getEtat() == 2){
-            this.cases.get(k).setEtat(0);
-            this.minesRest++;
+        else{
+            if (this.cases.get(k).getEtat() == 2){
+                this.cases.get(k).setEtat(0);
+                this.minesRest++;
+            }
         }
+        setChanged();
         notifyObservers();
     }
 
