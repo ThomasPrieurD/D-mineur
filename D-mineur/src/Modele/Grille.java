@@ -19,12 +19,20 @@ public class Grille  extends Observable{
     private int forme; // 0: classique
     private int[] dim;
     private int mines;
+    private int minesRest;
+    
+    private int gameState;
+    private int time;
+    
 
     public Grille(int forme, int[] dim, int mines) {
+        this.gameState = 0; // 0: en cours; 1: victoire; 2: défaite
+        this.time = 0;
         this.cases = new HashMap<>();
         this.forme = forme;
         this.dim = dim;
         this.mines = mines;
+        this.minesRest = mines;
         int k=0;
         for(int i=0;i<dim.length;i++){
             for(int j=0;j<dim[i];j++){
@@ -62,7 +70,7 @@ public class Grille  extends Observable{
             for (int j = -1; j <=1; j++){
                 if ((x+i>=0) && (x+i<dim[0]) && (y+j>=0) && (y+j<dim[1]) && 
                         !((i==0) && (j==0))){
-                    vois.add((x+i)*dim[0]+(y+j));
+                    vois.add((x+i)*dim[1]+(y+j));
                 }
             }
         }
@@ -72,30 +80,41 @@ public class Grille  extends Observable{
     
     public void clicG(int k){
         if (cases.get(k).isMine()){
-            //gameOver();
+            this.gameState = 2;
         }
         else{
-            ArrayList<Integer> vois = voisins(k);
-            int mineVois = 0;
-            for (int i=0; i<vois.size(); i++){
-                if (cases.get(vois.get(i)).isMine())
-                    mineVois++;
-            }
-            cases.get(k).setNbMineVois(mineVois);
-            //update(k,mineVois); // met à jour l'affichage de la case k
-            if (mineVois == 0)
-                for (int i=0; i<vois.size(); i++)
-                    clicG(vois.get(i));
+            clicGNoUpdate(k);
+            
         }
         setChanged();
         notifyObservers();
     }
     
+    public void clicGNoUpdate(int k){
+        
+        ArrayList<Integer> vois = voisins(k);
+        int mineVois = 0;
+        for (int i=0; i<vois.size(); i++){
+            if (cases.get(vois.get(i)).isMine())
+                mineVois++;
+        }
+        cases.get(k).setNbMineVois(mineVois);
+        if (mineVois == 0)
+            for (int i=0; i<vois.size(); i++)
+                if (cases.get(vois.get(i)).getEtat() == 0)
+                    clicGNoUpdate(vois.get(i));
+        
+    }
+    
     public void clicD(int k){
-        if (this.cases.get(k).getEtat() == 0)
+        if (this.cases.get(k).getEtat() == 0){
             this.cases.get(k).setEtat(2);
-        if (this.cases.get(k).getEtat() == 2)
+            this.minesRest--;
+        }
+        if (this.cases.get(k).getEtat() == 2){
             this.cases.get(k).setEtat(0);
+            this.minesRest++;
+        }
         setChanged();
         notifyObservers();
     }
