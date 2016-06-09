@@ -101,11 +101,15 @@ public class VueControleur extends Application {
         });
         */
         // création des bouton et placement dans la grille
-        
-        for (int i=0;i<400;i++) {
+        int l = 1;
+        for(int i=0;i<grille.getDim().length;i++){
+            l *= grille.getDim()[i];
+        }
+        for (int i=0;i<l;i++) {
             Rectangle layer2 = new Rectangle(30, 30, Color.GREY);
             layer2.setArcWidth(10);
             layer2.setArcHeight(10);
+            layer2.setX(i);
             cases.add(layer2);
             gPane.add(layer2, column++, row);
             
@@ -120,11 +124,12 @@ public class VueControleur extends Application {
                 
                 @Override
                 public void handle(MouseEvent event) {
-                    int indice = (int)layer2.getX()*grille.getDim()[1]+(int)layer2.getY();
+                    int indice = (int)layer2.getX();
                     if(event.getButton()==MouseButton.PRIMARY){
                         grille.clicG(indice);
                     }
                     else{
+                        
                         grille.clicD(indice);
                     }
                 }

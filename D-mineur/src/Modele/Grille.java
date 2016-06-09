@@ -26,13 +26,14 @@ public class Grille  extends Observable{
         this.dim = dim;
         this.mines = mines;
         int k=0;
+        int l = 1;
         for(int i=0;i<dim.length;i++){
-            for(int j=0;j<dim[i];j++){
-                this.cases.put(k, new Case());
-                k++;
-            }
+            l *= dim[i];
         }
-        
+        for(int i=0;i<l;i++){
+            this.cases.put(k, new Case());
+            k++;
+        }
         int minesAPlacer = this.mines;
         Random rand = new Random();
         int test;
@@ -62,7 +63,7 @@ public class Grille  extends Observable{
             for (int j = -1; j <=1; j++){
                 if ((x+i>=0) && (x+i<dim[0]) && (y+j>=0) && (y+j<dim[1]) && 
                         !((i==0) && (j==0))){
-                    vois.add((x+i)*dim[0]+(y+j));
+                    vois.add((x+i)*dim[1]+(y+j));
                 }
             }
         }
@@ -92,10 +93,12 @@ public class Grille  extends Observable{
     }
     
     public void clicD(int k){
+        System.out.println(this.cases.get(k).getEtat());
         if (this.cases.get(k).getEtat() == 0)
             this.cases.get(k).setEtat(2);
         if (this.cases.get(k).getEtat() == 2)
             this.cases.get(k).setEtat(0);
+        this.cases.get(k).setEtat(2);
         setChanged();
         notifyObservers();
     }
