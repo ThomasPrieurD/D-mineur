@@ -16,14 +16,14 @@ public class Modele extends Observable {
 
     private double lastValue;
     private boolean err = false;
-    private Byte[][][] GameBoard;
+    private Byte[][] GameBoard;
     private int nbmines;
 
     public Modele(int height,int width,int nbMines){
         
         for(int i=0;i<height;i++){
             for(int j=0;j<width;j++){
-                GameBoard[i][j][0]
+                //GameBoard[i][j]=0;
             }
         }
     }
@@ -59,5 +59,11 @@ public class Modele extends Observable {
     public double getValue() {
         return lastValue;
     }
+
+    public Byte[][] getGameBoard() {
+        return GameBoard;
+    }
+    
+    
 
 }
