@@ -15,9 +15,10 @@ import java.util.Random;
  * @author theo
  */
 public class Grille  extends Observable{
-    private HashMap<Integer,Case> cases;
+    private Case[][] cases;
     private int forme; // 0: classique
-    private int[] dim;
+    private int dimX;
+    private int dimY;
     private int mines;
     private int minesRest;
     
@@ -25,115 +26,176 @@ public class Grille  extends Observable{
     private int time;
     
 
-    public Grille(int forme, int[] dim, int mines) {
-        this.gameState = 0; // 0: en cours; 1: victoire; 2: défaite
+    public Grille(int forme, int dimX,int dimY, int mines) {
+        this.gameState = -1; // -1:pas démarré ;0: en cours; 1: victoire; 2: défaite
         this.time = 0;
-        this.cases = new HashMap<>();
+        this.cases = new Case[dimX][dimY];
         this.forme = forme;
-        this.dim = dim;
+        this.dimX = dimX;
+        this.dimY = dimY;
         this.mines = mines;
         this.minesRest = mines;
-        int k=0;
-        int l = 1;
-        for(int i=0;i<dim.length;i++){
-            l *= dim[i];
-        }
-        for(int i=0;i<l;i++){
-            this.cases.put(k, new Case());
-            k++;
-        }
-        int minesAPlacer = this.mines;
-        Random rand = new Random();
-        int test;
-        while (minesAPlacer > 0){
-            test = rand.nextInt(this.cases.size());
-            if (!this.cases.get(test).isMine()){
-                this.cases.get(test).placeMine();
-                minesAPlacer--;
+        for(int i = 0;i<this.dimX;i++){
+            for(int j = 0;j<this.dimY;j++){
+                this.cases[i][j] = new Case();
             }
         }
+        
     }
     
-    public ArrayList<Integer> voisins(int k){
-        ArrayList<Integer> vois = new ArrayList<Integer>();
-        switch(forme){
-            case 0: vois = voisinsRect(k);
-        }
-        return vois;
-    }
-    
-    
-    public ArrayList<Integer> voisinsRect(int k){
-        ArrayList<Integer> vois = new ArrayList<Integer>();
-        int y = k/dim[0];
-        int x = (k-y)/dim[0];
-        for (int i = -1; i <=1; i++){
-            for (int j = -1; j <=1; j++){
-                if ((x+i>=0) && (x+i<dim[0]) && (y+j>=0) && (y+j<dim[1]) && 
-                        !((i==0) && (j==0))){
-                    vois.add((x+i)*dim[1]+(y+j));
+    public void poseMines(int x,int y){
+        int minesAPlacer = this.mines;
+        ArrayList<Case> casesLibre = new ArrayList<>();
+        for(int i=0;i<this.dimX;i++){
+            for(int j=0;j<this.dimY;j++){
+                if((i>x+1 || i<x-1) || (j>y+1 || j<y-1)){
+                    casesLibre.add(this.getCase(i,j));
                 }
             }
         }
+        Random rand = new Random();
+        int test;
+        while (minesAPlacer > 0 && casesLibre.size()>0){
+            
+            test = rand.nextInt(casesLibre.size());
+            if (!casesLibre.get(test).isMine()){
+                
+                casesLibre.get(test).placeMine();
+                casesLibre.remove(test);
+                minesAPlacer--;
+            }
+        }
+        this.gameState = 0;
+    }
+    
+    public Position voisins(int x,int y,int numVoisin){
+        Position vois;
+        switch(forme){
+            case 0: vois = voisinsRect(x,y,numVoisin);
+                break;
+            default : vois = null;
+        }
         return vois;
     }
     
     
-    public void clicG(int k){
-        if(cases.get(k).getEtat() == 0){
-            if (cases.get(k).isMine()){
-                this.gameState = 2;
-                this.cases.get(k).setEtat(3);
+    public Position voisinsRect(int x,int y,int numVoisin){
+        int posX,posY;
+        switch(numVoisin){
+            case 0: posX = x-1;
+                    posY = y-1;
+                break;
+            case 1: posX = x;
+                    posY = y-1;
+                break;
+            case 2: posX = x+1;
+                    posY = y-1;
+                break;
+            case 3: posX = x+1;
+                    posY = y;
+                break;
+            case 4: posX = x+1;
+                    posY = y+1;
+                break;
+            case 5: posX = x;
+                    posY = y+1;
+                break;
+            case 6: posX = x-1;
+                    posY = y+1;
+                break;
+            case 7: posX = x-1;
+                    posY = y;
+                break;
+            default : posX = -1;
+                      posY = -1;
+                break;
+            
+        }
+        if(posX<0 || posY<0 || posX>=this.dimX || posY>=this.dimY )
+            return null;
+        else return new Position(posX,posY);
+    }
+    
+    
+    public void clicG(int x,int y){
+        if(this.getGameState() == -1){
+            this.poseMines(x, y);
+        }
+        if(this.getGameState() == 0){
+            Position pos;
+            if(cases[x][y].getEtat() == 0){
+                if (cases[x][y].isMine()){
+                    this.gameState = 2;
+                    this.cases[x][y].setEtat(3);
+                }
+                else{
+                    clicGRec(x,y);
+
+                }
+                setChanged();
+                notifyObservers();
+            }
+        }
+    }
+    
+    public void clicGRec(int x,int y){
+        this.cases[x][y].setEtat(1);
+        Position pos;
+        int mineVois = 0;
+        for (int i=0; i<8; i++){
+            if(voisins(x,y,i) != null){
+                pos = voisins(x,y,i);
+                if (cases[pos.getX()][pos.getY()].isMine())
+                    mineVois++;
+            }
+        }
+        cases[x][y].setNbMineVois(mineVois);
+        if (mineVois == 0){
+            for (int i=0; i<8; i++){
+                if(voisins(x,y,i) != null){
+                    pos = voisins(x,y,i);
+                    if (cases[pos.getX()][pos.getY()].getEtat() == 0 ){
+                        clicGRec(pos.getX(),pos.getY());
+                    }
+                }
+            }
+        }
+    }
+    
+    public void clicD(int x,int y){
+        if(this.getGameState() == 0){
+            if (this.cases[x][y].getEtat() == 0){
+                this.cases[x][y].setEtat(2);
+                this.minesRest--;
             }
             else{
-                clicGNoUpdate(k);
-
+                if (this.cases[x][y].getEtat() == 2){
+                    this.cases[x][y].setEtat(0);
+                    this.minesRest++;
+                }
             }
             setChanged();
             notifyObservers();
         }
     }
-    
-    public void clicGNoUpdate(int k){
-        this.cases.get(k).setEtat(1);
-        ArrayList<Integer> vois = voisins(k);
-        int mineVois = 0;
-        for (int i=0; i<vois.size(); i++){
-            if (cases.get(vois.get(i)).isMine())
-                mineVois++;
-        }
-        cases.get(k).setNbMineVois(mineVois);
-        if (mineVois == 0)
-            for (int i=0; i<vois.size(); i++)
-                if (cases.get(vois.get(i)).getEtat() == 0)
-                    clicGNoUpdate(vois.get(i));
-        
-    }
-    
-    public void clicD(int k){
-        if (this.cases.get(k).getEtat() == 0){
-            this.cases.get(k).setEtat(2);
-            this.minesRest--;
-        }
-        else{
-            if (this.cases.get(k).getEtat() == 2){
-                this.cases.get(k).setEtat(0);
-                this.minesRest++;
-            }
-        }
-        setChanged();
-        notifyObservers();
+
+    public int getDimX() {
+        return dimX;
     }
 
-    public int[] getDim() {
-        return dim;
+    public int getDimY() {
+        return dimY;
     }
 
-    public HashMap<Integer, Case> getCases() {
+    public Case[][] getCases() {
         return cases;
     }
     
-    public Case getCase(int i){
-        return cases.get(i);
+    public Case getCase(int x,int y){
+        return cases[x][y];
+    }
+    
+    public int getGameState(){
+        return this.gameState;
     }
 }

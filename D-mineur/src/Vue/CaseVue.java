@@ -6,6 +6,8 @@
 package Vue;
 
 import Modele.Case;
+import javafx.scene.shape.Shape;
+import javafx.scene.text.Text;
 
 /**
  *
@@ -13,13 +15,28 @@ import Modele.Case;
  */
 public class CaseVue {
     
-    private Case c;
+    private Shape shape;
+    private Text text;
 
-    public CaseVue(Case c) {
-        this.c = c;
+    public CaseVue(Shape shape, Text text) {
+        this.shape = shape;
+        this.text = text;
+    }
+
+    public Shape getShape() {
+        return shape;
+    }
+
+    public Text getText() {
+        return text;
+    }
+
+    public void setShape(Shape shape) {
+        this.shape = shape;
+    }
+
+    public void setText(Text text) {
+        this.text = text;
     }
     
-    public CaseVue(){
-        this(new Case());
-    }
 }
