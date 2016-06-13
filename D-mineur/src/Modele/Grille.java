@@ -126,6 +126,13 @@ public class Grille  extends Observable{
             if(cases[x][y].getEtat() == 0){
                 if (cases[x][y].isMine()){
                     this.gameState = 2;
+                    for(int i=0;i<this.getDimX();i++){
+                        for(int j=0;j<this.getDimX();j++){
+                            if(this.cases[i][j].isMine()){
+                                this.cases[i][j].setEtat(4);
+                            }
+                        }
+                    }
                     this.cases[x][y].setEtat(3);
                 }
                 else{

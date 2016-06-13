@@ -8,34 +8,17 @@ package Vue;
 
 
 import Modele.Grille;
-import Modele.Modele;
-import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import javafx.application.Application;
-
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.effect.Blend;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Effect;
-import javafx.scene.effect.Shadow;
-import javafx.scene.input.MouseButton;
-
-import javafx.scene.input.MouseEvent;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 
 /**
  *
@@ -51,7 +34,6 @@ public class VueControleur extends Application {
     
     @Override
     public void start(Stage primaryStage) {
-        
         this.dimX=20;
         this.dimY=20;
         this.cases = new CaseVue[this.dimX][this.dimY];
@@ -79,23 +61,27 @@ public class VueControleur extends Application {
                 Text text;
                 for(int i=0;i<dimX;i++){
                     for(int j=0;j<dimY;j++){
-                        layer = (Rectangle)cases[i][j].getShape();
+                        layer = (Rectangle)cases[i][j].getLayer();
                         text = (Text)cases[i][j].getText();
                         switch(grille.getCase(i, j).getEtat()){
                             case 0: layer.setFill(Color.GREY);
                                 break;
                             case 1:layer.setFill(Color.WHITE);
+                                if(grille.getCase(i,j).getNbMineVois()>0){
+                                    cases[i][j].colorTXt(grille.getCase(i,j).getNbMineVois());
+                                    text.setText(Integer.toString(grille.getCase(i,j).getNbMineVois()));
+                                }
                                 break;
                             case 2:layer.setFill(Color.BLACK);
                                 break;
                             case 3:layer.setFill(Color.RED);
                                 break;
+                            case 4:layer.setFill(Color.GREY);
+                                cases[i][j].mine();
+                                break;
                             default:layer.setFill(Color.GREY);
                                 break;
                         }
-                        if(grille.getCase(i,j).getNbMineVois()>0){
-                            text.setText(Integer.toString(grille.getCase(i,j).getNbMineVois()));
-                       }
                     }
                 }
             }
@@ -111,39 +97,11 @@ public class VueControleur extends Application {
             
         });
         */
-        // création des bouton et placement dans la grille
+        // création des cases et placement dans la grille
         for (int i=0;i<dimX;i++) {
             for(int j=0;j<dimY;j++){
-                StackPane stack  = new StackPane();
-                Rectangle layer2 = new Rectangle(30, 30, Color.GREY);
-                layer2.setArcWidth(10);
-                layer2.setArcHeight(10);
-                layer2.setX(i);
-                layer2.setY(j);
-                final Text text = new Text(0, 0, "");
-                text.setFill(Color.DARKBLUE);
-                stack.getChildren().addAll(layer2, text);
-                StackPane.setMargin(text, null);
-                gPane.add(stack, i, j);
-                cases[i][j] = new CaseVue(layer2,text);
-
-                // un controleur (EventHandler) par bouton écoute et met à jour le champ affichage
-                layer2.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-                    @Override
-                    public void handle(MouseEvent event) {
-                        int indiceX = (int)layer2.getX();
-                        int indiceY = (int)layer2.getY();
-                        if(event.getButton()==MouseButton.PRIMARY){
-                            grille.clicG(indiceX,indiceY);
-                        }
-                        else{
-
-                            grille.clicD(indiceX,indiceY);
-                        }
-                    }
-
-                });
+                cases[i][j] = new CaseVue(i,j,grille);
+                gPane.add(cases[i][j].getStack(), i, j);
             }    
         }
         
@@ -153,7 +111,9 @@ public class VueControleur extends Application {
         
         Scene scene = new Scene(border, Color.BLACK);
         
+        primaryStage.getIcons().add(new Image("images/mine.png"));
         primaryStage.setTitle("D-mineur");
+        
         primaryStage.setScene(scene);
         primaryStage.show();
     }
