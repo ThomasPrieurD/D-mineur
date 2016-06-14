@@ -5,6 +5,7 @@
  */
 package Modele;
 
+import static java.lang.Math.min;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
@@ -33,7 +34,7 @@ public class Grille  extends Observable{
         this.forme = forme;
         this.dimX = dimX;
         this.dimY = dimY;
-        this.mines = mines;
+        this.mines = min(mines,dimX*dimY-9);
         this.minesRest = mines;
         for(int i = 0;i<this.dimX;i++){
             for(int j = 0;j<this.dimY;j++){

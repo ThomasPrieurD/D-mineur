@@ -7,6 +7,7 @@ package Vue;
 
 import Modele.Grille;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -52,28 +53,9 @@ public class CaseVue {
         drapeau.setVisible(false);
         mine.setVisible(false);
         mineR.setVisible(false);
-        
-        this.getLayer().setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-            @Override
-            public void handle(MouseEvent event) {
-                int indiceX = (int) getLayer().getX();
-                int indiceY = (int)getLayer().getY();
-                if(event.getButton()==MouseButton.PRIMARY){
-                    grille.clicG(indiceX,indiceY);
-                    if(grille.getCase(i, j).getEtat()==3){
-                        mineR.setVisible(true);
-                    }
-                }
-                else{
-                    grille.clicD(indiceX,indiceY);
-                    if(grille.getCase(indiceX, indiceY).getEtat() != 1)
-                        drapeau.setVisible(!drapeau.isVisible());
-                }
-            }
-
-        });
-        
+        adMouseEvents(drapeau,grille);
+        adMouseEvents(this.layer,grille);
+        adMouseEvents(this.text,grille);
     }
     
     public void mine(){
@@ -94,6 +76,29 @@ public class CaseVue {
             default:this.text.setFill(Color.BLACK);
                 break;
         }
+    }
+    
+    public void adMouseEvents(Node node,Grille grille){
+        node.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+                int indiceX = (int) getLayer().getX();
+                int indiceY = (int)getLayer().getY();
+                if(event.getButton()==MouseButton.PRIMARY){
+                    grille.clicG(indiceX,indiceY);
+                    if(grille.getCase(indiceX,indiceY).getEtat()==3){
+                        mineR.setVisible(true);
+                    }
+                }
+                else{
+                    grille.clicD(indiceX,indiceY);
+                    if(grille.getCase(indiceX, indiceY).getEtat() != 1)
+                        drapeau.setVisible(!drapeau.isVisible());
+                }
+            }
+
+        });
     }
     
     public CaseVue(int i,int j,Grille grille){
