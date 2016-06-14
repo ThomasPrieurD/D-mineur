@@ -112,6 +112,7 @@ public class VueControleur extends Application {
         Scene scene = new Scene(border, Color.BLACK);
         
         primaryStage.getIcons().add(new Image("images/mine.png"));
+        
         primaryStage.setTitle("D-mineur");
         
         primaryStage.setScene(scene);

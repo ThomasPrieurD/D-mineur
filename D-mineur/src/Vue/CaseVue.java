@@ -59,7 +59,13 @@ public class CaseVue {
     }
     
     public void mine(){
-        drapeau.setVisible(false);
+        if(drapeau.isVisible()){
+            drapeau.setVisible(false);
+            this.layer.setFill(Color.DARKBLUE);
+        }
+        else{
+            this.layer.setFill(Color.BLACK);
+        }
         mine.setVisible(true);
     }
     
