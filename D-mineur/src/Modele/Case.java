@@ -10,7 +10,7 @@ package Modele;
  * @author theo
  */
 public class Case {
-    private int etat; // 0: non cliquée; 1: cliquée; 2: drapeau; 3: mine cliquée;4:mine
+    private int etat; // 0: non cliquée; 1: cliquée; 2: drapeau; 3: mine cliquée;4:mine;5:mine marquée
     private boolean mine;
     private int nbMineVois;
 

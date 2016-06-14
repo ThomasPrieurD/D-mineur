@@ -50,9 +50,6 @@ public class ControlerRunnable implements Runnable{
         int j = (int)options.get(1);
         CaseVue c = (CaseVue)options.get(2);
         grille.clicG((int)options.get(0),(int)options.get(1));
-        if(grille.getCase(i,j).getEtat()==3){
-            c.setVisibleMineR();
-        }
     }
     
     public void clicD(){
@@ -60,8 +57,6 @@ public class ControlerRunnable implements Runnable{
         int j = (int)options.get(1);
         CaseVue c = (CaseVue)options.get(2);
         grille.clicD(i,j);
-        if(grille.getCase(i, j).getEtat() != 1)
-            c.setVisibleDrapeau();
     }
     
     public void sleep(){

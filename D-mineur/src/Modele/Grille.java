@@ -127,19 +127,16 @@ public class Grille  extends Observable{
             if(cases[x][y].getEtat() == 0){
                 if (cases[x][y].isMine()){
                     this.gameState = 2;
-                    for(int i=0;i<this.getDimX();i++){
-                        for(int j=0;j<this.getDimX();j++){
-                            if(this.cases[i][j].isMine()){
-                                this.cases[i][j].setEtat(4);
-                            }
-                        }
-                    }
+                    afficheMines();
+                    
                     this.cases[x][y].setEtat(3);
+                    this.gameState = 2;
                 }
                 else{
                     clicGRec(x,y);
 
                 }
+                updateEtat();
                 setChanged();
                 notifyObservers();
             }
@@ -182,6 +179,7 @@ public class Grille  extends Observable{
                     this.minesRest++;
                 }
             }
+            updateEtat();
             setChanged();
             notifyObservers();
         }
@@ -205,5 +203,39 @@ public class Grille  extends Observable{
     
     public int getGameState(){
         return this.gameState;
+    }
+    
+    public void afficheMines(){
+        for(int i=0;i<this.getDimX();i++){
+            for(int j=0;j<this.getDimX();j++){
+                if(this.cases[i][j].isMine()){
+                    if(this.cases[i][j].getEtat()==2){
+                        this.cases[i][j].setEtat(5);
+                    }
+                    else this.cases[i][j].setEtat(4);
+                }
+            }
+        }
+    }
+    
+    public void updateEtat(){
+        if(this.gameState==0){
+            int nbMineTrouvee = 0;
+            int nbCasesCliquee = 0;
+            for(int i=0;i<this.dimX;i++){
+                for(int j=0;j<this.dimX;j++){
+                    if(this.cases[i][j].isMine() && this.cases[i][j].getEtat() == 2){
+                        nbMineTrouvee++;
+                    }
+                    if(this.cases[i][j].getEtat() != 0 && this.cases[i][j].getEtat() != 2){
+                        nbCasesCliquee++;
+                    }
+                }
+            }
+            if(nbCasesCliquee == dimX*dimY-mines || nbMineTrouvee == mines){
+                this.gameState = 1;
+                afficheMines();
+            }
+        }
     }
 }

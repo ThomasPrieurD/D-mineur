@@ -54,27 +54,46 @@ public class VueControleur extends Application {
             
             @Override
             public void update(Observable o, Object arg) {
+                CaseVue c;
                 Rectangle layer;
                 Text text;
                 for(int i=0;i<dimX;i++){
                     for(int j=0;j<dimY;j++){
                         layer = (Rectangle)cases[i][j].getLayer();
                         text = (Text)cases[i][j].getText();
+                        c = cases[i][j];
                         switch(grille.getCase(i, j).getEtat()){
                             case 0: layer.setFill(Color.GREY);
+                                c.setVisibleMineR(false);
+                                c.setVisibleMine(false);
+                                c.setVisibleDrapeau(false);
                                 break;
                             case 1:layer.setFill(Color.WHITE);
-                                if(grille.getCase(i,j).getNbMineVois()>0){
-                                    cases[i][j].colorTXt(grille.getCase(i,j).getNbMineVois());
-                                    text.setText(Integer.toString(grille.getCase(i,j).getNbMineVois()));
-                                }
+                                cases[i][j].colorTXt(grille.getCase(i,j).getNbMineVois());
+                                text.setText(Integer.toString(grille.getCase(i,j).getNbMineVois()));
+                                c.setVisibleMineR(false);
+                                c.setVisibleMine(false);
+                                c.setVisibleDrapeau(false);
                                 break;
                             case 2:layer.setFill(Color.BLACK);
+                                c.setVisibleMineR(false);
+                                c.setVisibleMine(false);
+                                c.setVisibleDrapeau(true);
                                 break;
                             case 3:layer.setFill(Color.RED);
+                                c.setVisibleMineR(true);
+                                c.setVisibleMine(false);
+                                c.setVisibleDrapeau(false);
                                 break;
                             case 4:layer.setFill(Color.GREY);
-                                cases[i][j].mine();
+                                c.setVisibleMineR(false);
+                                c.setVisibleMine(true);
+                                c.setVisibleDrapeau(false);
+                                break;
+                            case 5:layer.setFill(Color.DARKBLUE);
+                                c.setVisibleMineR(false);
+                                c.setVisibleMine(true);
+                                c.setVisibleDrapeau(false);
                                 break;
                             default:layer.setFill(Color.GREY);
                                 break;
@@ -84,16 +103,6 @@ public class VueControleur extends Application {
             }
         });
         
-        // on efface affichage lors du clic
-        /*m.getGameBoard().setOnMouseClicked(new EventHandler<MouseEvent>() {
-            
-            @Override
-            public void handle(MouseEvent event) {
-                //affichage.setText("");
-            }
-            
-        });
-        */
         // création des cases et placement dans la grille
         for (int i=0;i<dimX;i++) {
             for(int j=0;j<dimY;j++){

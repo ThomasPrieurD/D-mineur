@@ -62,19 +62,10 @@ public class CaseVue {
         this(new Rectangle(30, 30, Color.GREY),new Text(0, 0, ""),i,j,vuecontrol);
     }
     
-    public void mine(){
-        if(drapeau.isVisible()){
-            drapeau.setVisible(false);
-            this.layer.setFill(Color.DARKBLUE);
-        }
-        else{
-            this.layer.setFill(Color.BLACK);
-        }
-        mine.setVisible(true);
-    }
-    
     public void colorTXt(int number){
         switch(number){
+            case 0:this.text.setFill(Color.WHITE);
+                break;
             case 1:this.text.setFill(Color.DARKBLUE);
                 break;
             case 2:this.text.setFill(Color.DARKGREEN);
@@ -97,16 +88,9 @@ public class CaseVue {
                 int indiceY = (int)getLayer().getY();
                 if(event.getButton()==MouseButton.PRIMARY){
                     vuecontrol.clicG(indiceX, indiceY);
-                    /*grille.clicG(indiceX,indiceY);
-                    if(grille.getCase(indiceX,indiceY).getEtat()==3){
-                        mineR.setVisible(true);
-                    }*/
                 }
                 else{
                     vuecontrol.clicD(indiceX, indiceY);
-                    /*grille.clicD(indiceX,indiceY);
-                    if(grille.getCase(indiceX, indiceY).getEtat() != 1)
-                        drapeau.setVisible(!drapeau.isVisible());*/
                 }
             }
 
@@ -151,11 +135,15 @@ public class CaseVue {
         this.text = text;
     }
     
-    public void setVisibleMineR(){
-        mineR.setVisible(!mineR.isVisible());
+    public void setVisibleMineR(boolean bool){
+        mineR.setVisible(bool);
     }
     
-    public void setVisibleDrapeau(){
-        drapeau.setVisible(!drapeau.isVisible());
+    public void setVisibleMine(boolean bool){
+        mine.setVisible(bool);
+    }
+    
+    public void setVisibleDrapeau(boolean bool){
+        drapeau.setVisible(bool);
     }
 }
