@@ -4,10 +4,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Vue;
+package VueControler;
 
 
 import Modele.Grille;
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import javafx.application.Application;
@@ -32,6 +33,8 @@ public class VueControleur extends Application {
     private int dimX;
     private int dimY;
     
+    private Threads threads = new Threads();
+    
     @Override
     public void start(Stage primaryStage) {
         this.dimX=20;
@@ -45,12 +48,6 @@ public class VueControleur extends Application {
         
         // permet de placer les diffrents boutons dans une grille
         GridPane gPane = new GridPane();
-        
-        int column = 0;
-        int row = 0;
-        
-        
-        
         
         // la vue observe les "update" du modèle, et réalise les mises à jour graphiques
         grille.addObserver(new Observer() {
@@ -100,7 +97,7 @@ public class VueControleur extends Application {
         // création des cases et placement dans la grille
         for (int i=0;i<dimX;i++) {
             for(int j=0;j<dimY;j++){
-                cases[i][j] = new CaseVue(i,j,grille);
+                cases[i][j] = new CaseVue(i,j,this);
                 gPane.add(cases[i][j].getStack(), i, j);
             }    
         }
@@ -117,6 +114,22 @@ public class VueControleur extends Application {
         
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+    
+    public void clicG(int i,int j){
+        ArrayList array = new ArrayList();
+        array.add(i);
+        array.add(j);
+        array.add(cases[i][j]);
+        threads.exec(0,array,grille);
+    }
+    
+    public void clicD(int i,int j){
+        ArrayList array = new ArrayList();
+        array.add(i);
+        array.add(j);
+        array.add(cases[i][j]);
+        threads.exec(1,array,grille);
     }
 
     /**

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Vue;
+package VueControler;
 
 import Modele.Grille;
 import javafx.event.EventHandler;
@@ -33,7 +33,7 @@ public class CaseVue {
     private Text text;
     private StackPane stack  = new StackPane();
 
-    public CaseVue(Rectangle layer, Text text,int i,int j,Grille grille) {
+    public CaseVue(Rectangle layer, Text text,int i,int j,VueControleur vuecontrol) {
         drapeau.setFitHeight(25);
         drapeau.setPreserveRatio(true);
         mine.setFitHeight(25);
@@ -53,9 +53,13 @@ public class CaseVue {
         drapeau.setVisible(false);
         mine.setVisible(false);
         mineR.setVisible(false);
-        adMouseEvents(drapeau,grille);
-        adMouseEvents(this.layer,grille);
-        adMouseEvents(this.text,grille);
+        adMouseEvents(drapeau,vuecontrol);
+        adMouseEvents(this.layer,vuecontrol);
+        adMouseEvents(this.text,vuecontrol);
+    }
+    
+    public CaseVue(int i,int j,VueControleur vuecontrol){
+        this(new Rectangle(30, 30, Color.GREY),new Text(0, 0, ""),i,j,vuecontrol);
     }
     
     public void mine(){
@@ -84,7 +88,7 @@ public class CaseVue {
         }
     }
     
-    public void adMouseEvents(Node node,Grille grille){
+    public void adMouseEvents(Node node,VueControleur vuecontrol){
         node.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
             @Override
@@ -92,24 +96,39 @@ public class CaseVue {
                 int indiceX = (int) getLayer().getX();
                 int indiceY = (int)getLayer().getY();
                 if(event.getButton()==MouseButton.PRIMARY){
-                    grille.clicG(indiceX,indiceY);
+                    vuecontrol.clicG(indiceX, indiceY);
+                    /*grille.clicG(indiceX,indiceY);
                     if(grille.getCase(indiceX,indiceY).getEtat()==3){
                         mineR.setVisible(true);
-                    }
+                    }*/
                 }
                 else{
-                    grille.clicD(indiceX,indiceY);
+                    vuecontrol.clicD(indiceX, indiceY);
+                    /*grille.clicD(indiceX,indiceY);
                     if(grille.getCase(indiceX, indiceY).getEtat() != 1)
-                        drapeau.setVisible(!drapeau.isVisible());
+                        drapeau.setVisible(!drapeau.isVisible());*/
                 }
             }
 
         });
+        
+        node.setOnMouseEntered(new EventHandler<MouseEvent>(){
+            @Override
+            public void handle(MouseEvent me){
+                if(layer.getFill() == Color.GREY)
+                    layer.setFill(Color.LIGHTGREY);
+            }
+        });
+        node.setOnMouseExited(new EventHandler<MouseEvent>(){
+            @Override
+            public void handle(MouseEvent me){
+                if(layer.getFill() == Color.LIGHTGREY)
+                    layer.setFill(Color.GREY);
+            }
+        });
     }
     
-    public CaseVue(int i,int j,Grille grille){
-        this(new Rectangle(30, 30, Color.GREY),new Text(0, 0, ""),i,j,grille);
-    }
+    
     
     public Rectangle getLayer() {
         return layer;
@@ -132,4 +151,11 @@ public class CaseVue {
         this.text = text;
     }
     
+    public void setVisibleMineR(){
+        mineR.setVisible(!mineR.isVisible());
+    }
+    
+    public void setVisibleDrapeau(){
+        drapeau.setVisible(!drapeau.isVisible());
+    }
 }
