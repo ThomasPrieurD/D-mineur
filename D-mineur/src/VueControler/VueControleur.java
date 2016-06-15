@@ -8,9 +8,12 @@ package VueControler;
 
 
 import Modele.Grille;
+import Modele.Timer;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -38,6 +41,7 @@ public class VueControleur extends Application {
     private int dimY;
     private int nbMines;
     private int forme;
+    private Timer timer;
     
     private Threads threads = new Threads();
     
@@ -51,6 +55,10 @@ public class VueControleur extends Application {
         this.cases = new CaseVue[this.dimX][this.dimY];
         // initialisation du modèle que l'on souhaite utiliser
         grille = new Grille(this.forme,this.dimX,this.dimY,this.nbMines);
+        this.timer = new Timer();
+        Thread TimerThread = new Thread (timer);
+        TimerThread.setDaemon(true);
+        TimerThread.start();
         
         // gestion du placement (permet de palcer le champ Text affichage en haut, et GridPane gPane au centre)
         BorderPane border = new BorderPane();
@@ -126,7 +134,18 @@ public class VueControleur extends Application {
                     default : menu.happy();
                         break;
                 }
+                if(grille.getGameState()>0){
+                    timer.pause();
+                }
                 menu.setNbDrapeau(nbMines - grille.getNbDrapeau());
+            }
+        });
+        
+        timer.addObserver(new Observer() {
+            
+            @Override
+            public void update(Observable o, Object arg) {
+                menu.setTime(timer.getMin(),timer.getSec());
             }
         });
         
@@ -180,6 +199,10 @@ public class VueControleur extends Application {
         array.add(dimY);
         array.add(nbMines);
         threads.exec(2,array,grille);
+        timer.restart();
+        synchronized (timer){
+            timer.notify();
+        }
     }
 
     public int getNbMines() {

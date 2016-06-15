@@ -33,11 +33,14 @@ public class Menu extends Pane{
     private Image sad = new Image("images/sad.png");
     private Image swag = new Image("images/swag.png");
     private ImageView drapeau = new ImageView(new Image("images/drapeau.png"));
+    private ImageView time = new ImageView(new Image("images/horloge.jpg"));
     private ImageView smiley = new ImageView(happy);
     private Button newGame = new Button("",smiley);
     
     private Text nbDrapeau;
+    private Text timer;
     private ComboBox dif;
+    private ComboBox forme;
     
     public Menu(VueControleur controleur) {
         //images
@@ -45,6 +48,8 @@ public class Menu extends Pane{
         smiley.setPreserveRatio(true);
         drapeau.setFitHeight(30);
         drapeau.setPreserveRatio(true);
+        time.setFitHeight(30);
+        time.setPreserveRatio(true);
         
         this.setPadding(new Insets(10, 0, 10, 0));
         
@@ -56,6 +61,10 @@ public class Menu extends Pane{
         this.nbDrapeau.setFont(Font.font("Verdana", FontWeight.NORMAL, 20));
         this.nbDrapeau.setFill(Color.WHITE);
         
+        this.timer = new Text(0+" : "+0);
+        this.timer.setFont(Font.font("Verdana", FontWeight.NORMAL, 20));
+        this.timer.setFill(Color.WHITE);
+        
         dif = new ComboBox();
         dif.getItems().addAll(
                     "facile",//10 * 10 et 10 mines
@@ -64,8 +73,14 @@ public class Menu extends Pane{
         );
         dif.setValue("facile");
         
+        forme = new ComboBox();
+        forme.getItems().addAll(
+                    "rectangle"
+        );
+        forme.setValue("rectangle");
+        
         this.setStyle("-fx-background-color: #336699;");
-        this.getChildren().addAll(newGame,drapeau,nbDrapeau,dif);
+        this.getChildren().addAll(newGame,drapeau,nbDrapeau,time,timer,dif,forme);
         
         newGame.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
@@ -79,13 +94,21 @@ public class Menu extends Pane{
         newGame.setTranslateX((width-60)/2);
         newGame.setTranslateY(10);
         
-        drapeau.setTranslateX(width/2 + 100);
+        drapeau.setTranslateX(width/2 + 70);
         drapeau.setTranslateY((this.getHeight())/2-15);
-        nbDrapeau.setTranslateX(width/2 + 130);
+        nbDrapeau.setTranslateX(width/2 + 100);
         nbDrapeau.setTranslateY((this.getHeight())/2+5);
         
-        dif.setTranslateX(width/2 - 270);
+        time.setTranslateX(width/2 + 170);
+        time.setTranslateY((this.getHeight())/2-15);
+        timer.setTranslateX(width/2 + 210);
+        timer.setTranslateY((this.getHeight())/2+5);
+        
+        dif.setTranslateX(width/2 - 75 - forme.getWidth() - dif.getWidth());
         dif.setTranslateY((this.getHeight())/2-20);
+        
+        forme.setTranslateX(width/2 - 50 - forme.getWidth());
+        forme.setTranslateY((this.getHeight())/2-20);
         
     }
     
@@ -102,5 +125,9 @@ public class Menu extends Pane{
     
     public void setNbDrapeau(int n){
         this.nbDrapeau.setText(": "+n);
+    }
+    
+    public void setTime(int min, int sec){
+        this.timer.setText(min+" : "+sec);
     }
 }
