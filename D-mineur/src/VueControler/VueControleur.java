@@ -12,14 +12,18 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.Stage;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 /**
  *
@@ -32,22 +36,35 @@ public class VueControleur extends Application {
     private CaseVue[][] cases;
     private int dimX;
     private int dimY;
+    private int nbMines;
+    private int forme;
     
     private Threads threads = new Threads();
     
     @Override
     public void start(Stage primaryStage) {
-        this.dimX=20;
-        this.dimY=20;
+        
+        this.dimX=10;
+        this.dimY=10;
+        this.nbMines = 10;
+        this.forme=0;
         this.cases = new CaseVue[this.dimX][this.dimY];
         // initialisation du modèle que l'on souhaite utiliser
-        grille = new Grille(0,this.dimX,this.dimY,50);
+        grille = new Grille(this.forme,this.dimX,this.dimY,this.nbMines);
         
         // gestion du placement (permet de palcer le champ Text affichage en haut, et GridPane gPane au centre)
         BorderPane border = new BorderPane();
         
         // permet de placer les diffrents boutons dans une grille
         GridPane gPane = new GridPane();
+        gPane.setStyle("-fx-background-color: #000000;");
+        Menu menu = new Menu(this);
+        Pane gauche = new Pane();
+        gauche.setStyle("-fx-background-color: #000000;");
+        
+        primaryStage.setResizable(false);
+        primaryStage.sizeToScene();
+
         
         // la vue observe les "update" du modèle, et réalise les mises à jour graphiques
         grille.addObserver(new Observer() {
@@ -67,6 +84,7 @@ public class VueControleur extends Application {
                                 c.setVisibleMineR(false);
                                 c.setVisibleMine(false);
                                 c.setVisibleDrapeau(false);
+                                text.setText("");
                                 break;
                             case 1:layer.setFill(Color.WHITE);
                                 cases[i][j].colorTXt(grille.getCase(i,j).getNbMineVois());
@@ -100,6 +118,15 @@ public class VueControleur extends Application {
                         }
                     }
                 }
+                switch(grille.getGameState()){
+                    case 1 : menu.swag();
+                        break;
+                    case 2 : menu.sad();
+                        break;
+                    default : menu.happy();
+                        break;
+                }
+                menu.setNbDrapeau(grille.getNbDrapeau());
             }
         });
         
@@ -112,17 +139,22 @@ public class VueControleur extends Application {
         }
         
         gPane.setGridLinesVisible(true);
-        
+        border.setTop(menu);
         border.setCenter(gPane);
+        border.setLeft(gauche);
+        //gauche.setMinWidth(50);
         
         Scene scene = new Scene(border, Color.BLACK);
-        
+        menu.setMinWidth(600);
         primaryStage.getIcons().add(new Image("images/mine.png"));
         
         primaryStage.setTitle("D-mineur");
-        
         primaryStage.setScene(scene);
         primaryStage.show();
+        menu.placeBouttons((int) gPane.getWidth());
+        if(30*dimX<600){
+            gauche.setMinWidth((600 - 30*dimX)/2);
+        }
     }
     
     public void clicG(int i,int j){
@@ -140,6 +172,21 @@ public class VueControleur extends Application {
         array.add(cases[i][j]);
         threads.exec(1,array,grille);
     }
+    
+    public void restart(){
+        ArrayList array = new ArrayList();
+        array.add(forme);
+        array.add(dimX);
+        array.add(dimY);
+        array.add(nbMines);
+        threads.exec(2,array,grille);
+    }
+
+    public int getNbMines() {
+        return nbMines;
+    }
+    
+    
 
     /**
      * @param args the command line arguments
