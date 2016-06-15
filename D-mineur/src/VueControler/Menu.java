@@ -12,6 +12,7 @@ import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -32,12 +33,11 @@ public class Menu extends Pane{
     private Image sad = new Image("images/sad.png");
     private Image swag = new Image("images/swag.png");
     private ImageView drapeau = new ImageView(new Image("images/drapeau.png"));
-    private ImageView mine = new ImageView(new Image("images/mine.png"));
     private ImageView smiley = new ImageView(happy);
     private Button newGame = new Button("",smiley);
     
-    private Text nbMines;
     private Text nbDrapeau;
+    private ComboBox dif;
     
     public Menu(VueControleur controleur) {
         //images
@@ -45,8 +45,6 @@ public class Menu extends Pane{
         smiley.setPreserveRatio(true);
         drapeau.setFitHeight(30);
         drapeau.setPreserveRatio(true);
-        mine.setFitHeight(30);
-        mine.setPreserveRatio(true);
         
         this.setPadding(new Insets(10, 0, 10, 0));
         
@@ -54,16 +52,20 @@ public class Menu extends Pane{
         newGame.setPadding(new Insets(10, 10, 10, 10));
         
         //texts
-        this.nbMines = new Text(": "+controleur.getNbMines());
-        this.nbMines.setFont(Font.font("Verdana", FontWeight.NORMAL, 20));
-        this.nbMines.setFill(Color.WHITE);
-        
-        this.nbDrapeau = new Text(": "+0);
+        this.nbDrapeau = new Text(": "+controleur.getNbMines());
         this.nbDrapeau.setFont(Font.font("Verdana", FontWeight.NORMAL, 20));
         this.nbDrapeau.setFill(Color.WHITE);
         
+        dif = new ComboBox();
+        dif.getItems().addAll(
+                    "facile",//10 * 10 et 10 mines
+                    "moyen",//20*20 et 50 mines
+                    "difficile"//20*40 et 100 mines 
+        );
+        dif.setValue("facile");
+        
         this.setStyle("-fx-background-color: #336699;");
-        this.getChildren().addAll(newGame,mine,nbMines,drapeau,nbDrapeau);
+        this.getChildren().addAll(newGame,drapeau,nbDrapeau,dif);
         
         newGame.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
@@ -77,15 +79,13 @@ public class Menu extends Pane{
         newGame.setTranslateX((width-60)/2);
         newGame.setTranslateY(10);
         
-        mine.setTranslateX(width/2 + 100);
-        mine.setTranslateY((this.getHeight())/2 -45);
-        nbMines.setTranslateX(width/2 + 130);
-        nbMines.setTranslateY((this.getHeight())/2-25);
-        
         drapeau.setTranslateX(width/2 + 100);
-        drapeau.setTranslateY((this.getHeight())/2);
+        drapeau.setTranslateY((this.getHeight())/2-15);
         nbDrapeau.setTranslateX(width/2 + 130);
-        nbDrapeau.setTranslateY((this.getHeight())/2+20);
+        nbDrapeau.setTranslateY((this.getHeight())/2+5);
+        
+        dif.setTranslateX(width/2 - 270);
+        dif.setTranslateY((this.getHeight())/2-20);
         
     }
     
