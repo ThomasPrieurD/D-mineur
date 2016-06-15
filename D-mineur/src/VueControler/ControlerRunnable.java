@@ -34,6 +34,8 @@ public class ControlerRunnable implements Runnable{
                         break;
                     case 1:clicD();
                         break;
+                    case 2:this.grille.restart((int)options.get(0), (int)options.get(1), (int)options.get(2), (int)options.get(3));
+                        break;
                 }
 
                 try {

@@ -21,7 +21,7 @@ public class Grille  extends Observable{
     private int dimX;
     private int dimY;
     private int mines;
-    private int minesRest;
+    private int nbDrapeau;
     
     private int gameState;
     private int time;
@@ -30,12 +30,12 @@ public class Grille  extends Observable{
     public Grille(int forme, int dimX,int dimY, int mines) {
         this.gameState = -1; // -1:pas démarré ;0: en cours; 1: victoire; 2: défaite
         this.time = 0;
+        this.nbDrapeau = 0;
         this.cases = new Case[dimX][dimY];
         this.forme = forme;
         this.dimX = dimX;
         this.dimY = dimY;
         this.mines = min(mines,dimX*dimY-9);
-        this.minesRest = mines;
         for(int i = 0;i<this.dimX;i++){
             for(int j = 0;j<this.dimY;j++){
                 this.cases[i][j] = new Case();
@@ -171,12 +171,12 @@ public class Grille  extends Observable{
         if(this.getGameState() == 0){
             if (this.cases[x][y].getEtat() == 0){
                 this.cases[x][y].setEtat(2);
-                this.minesRest--;
+                this.nbDrapeau++;
             }
             else{
                 if (this.cases[x][y].getEtat() == 2){
                     this.cases[x][y].setEtat(0);
-                    this.minesRest++;
+                    this.nbDrapeau--;
                 }
             }
             updateEtat();
@@ -192,6 +192,12 @@ public class Grille  extends Observable{
     public int getDimY() {
         return dimY;
     }
+
+    public int getNbDrapeau() {
+        return nbDrapeau;
+    }
+    
+    
 
     public Case[][] getCases() {
         return cases;
@@ -220,22 +226,36 @@ public class Grille  extends Observable{
     
     public void updateEtat(){
         if(this.gameState==0){
-            int nbMineTrouvee = 0;
             int nbCasesCliquee = 0;
             for(int i=0;i<this.dimX;i++){
                 for(int j=0;j<this.dimX;j++){
-                    if(this.cases[i][j].isMine() && this.cases[i][j].getEtat() == 2){
-                        nbMineTrouvee++;
-                    }
                     if(this.cases[i][j].getEtat() != 0 && this.cases[i][j].getEtat() != 2){
                         nbCasesCliquee++;
                     }
                 }
             }
-            if(nbCasesCliquee == dimX*dimY-mines || nbMineTrouvee == mines){
+            if(nbCasesCliquee == dimX*dimY-mines){
                 this.gameState = 1;
                 afficheMines();
             }
         }
+    }
+    
+    public void restart(int forme, int dimX,int dimY, int mines) {
+        this.gameState = -1; // -1:pas démarré ;0: en cours; 1: victoire; 2: défaite
+        this.time = 0;
+        this.cases = new Case[dimX][dimY];
+        this.forme = forme;
+        this.nbDrapeau = 0;
+        this.dimX = dimX;
+        this.dimY = dimY;
+        this.mines = min(mines,dimX*dimY-9);
+        for(int i = 0;i<this.dimX;i++){
+            for(int j = 0;j<this.dimY;j++){
+                this.cases[i][j] = new Case();
+            }
+        }
+        setChanged();
+        notifyObservers();
     }
 }
