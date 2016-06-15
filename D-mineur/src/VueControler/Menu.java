@@ -8,9 +8,7 @@ package VueControler;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
@@ -51,8 +49,6 @@ public class Menu extends Pane{
         time.setFitHeight(30);
         time.setPreserveRatio(true);
         
-        this.setPadding(new Insets(10, 0, 10, 0));
-        
         //bouttons
         newGame.setPadding(new Insets(10, 10, 10, 10));
         
@@ -71,7 +67,14 @@ public class Menu extends Pane{
                     "moyen",//20*20 et 50 mines
                     "difficile"//20*40 et 100 mines 
         );
-        dif.setValue("facile");
+        switch(controleur.getDifficulte()){
+            case 1 : dif.setValue("facile");
+                break;
+            case 2 : dif.setValue("moyen");
+                break;
+            case 3 : dif.setValue("difficile");
+                break;
+        }
         
         forme = new ComboBox();
         forme.getItems().addAll(
@@ -84,7 +87,14 @@ public class Menu extends Pane{
         
         newGame.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
-                controleur.restart();
+                switch((String)dif.getValue()){
+                    case "facile": controleur.restart(1);
+                        break;
+                    case "moyen": controleur.restart(2);
+                        break;
+                    case "difficile": controleur.restart(3);
+                        break;
+                }
             }
         });
         

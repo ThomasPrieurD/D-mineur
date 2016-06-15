@@ -12,16 +12,11 @@ import Modele.Timer;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -34,31 +29,32 @@ import javafx.stage.Stage;
  */
 public class VueControleur extends Application {
     
-    // modèle : ce qui réalise le calcule de l'expression
     private Grille grille;
     private CaseVue[][] cases;
-    private int dimX;
-    private int dimY;
-    private int nbMines;
-    private int forme;
-    private Timer timer;
-    
-    private Threads threads = new Threads();
+    private final Timer timer = new Timer();
+    private final Thread TimerThread = new Thread (timer);
+    private final Threads threads = new Threads();
+    private int difficulte = 1;
+    private Stage primaryStage;
     
     @Override
     public void start(Stage primaryStage) {
         
-        this.dimX=10;
-        this.dimY=10;
-        this.nbMines = 10;
-        this.forme=0;
-        this.cases = new CaseVue[this.dimX][this.dimY];
+        this.primaryStage = primaryStage;
+        
         // initialisation du modèle que l'on souhaite utiliser
-        grille = new Grille(this.forme,this.dimX,this.dimY,this.nbMines);
-        this.timer = new Timer();
-        Thread TimerThread = new Thread (timer);
-        TimerThread.setDaemon(true);
-        TimerThread.start();
+        switch(difficulte){
+            case 1 :grille = new Grille(0,10,10,15);
+                break;
+            case 2 :grille = new Grille(0,30,15,70);
+                break;
+            case 3 :grille = new Grille(0,40,20,200);
+                break;
+        }
+        
+        this.cases = new CaseVue[grille.getDimX()][grille.getDimY()];
+        
+        
         
         // gestion du placement (permet de palcer le champ Text affichage en haut, et GridPane gPane au centre)
         BorderPane border = new BorderPane();
@@ -70,8 +66,7 @@ public class VueControleur extends Application {
         Pane gauche = new Pane();
         gauche.setStyle("-fx-background-color: #000000;");
         
-        primaryStage.setResizable(false);
-        primaryStage.sizeToScene();
+        
 
         
         // la vue observe les "update" du modèle, et réalise les mises à jour graphiques
@@ -82,8 +77,8 @@ public class VueControleur extends Application {
                 CaseVue c;
                 Rectangle layer;
                 Text text;
-                for(int i=0;i<dimX;i++){
-                    for(int j=0;j<dimY;j++){
+                for(int i=0;i<grille.getDimX();i++){
+                    for(int j=0;j<grille.getDimY();j++){
                         layer = (Rectangle)cases[i][j].getLayer();
                         text = (Text)cases[i][j].getText();
                         c = cases[i][j];
@@ -137,7 +132,7 @@ public class VueControleur extends Application {
                 if(grille.getGameState()>0){
                     timer.pause();
                 }
-                menu.setNbDrapeau(nbMines - grille.getNbDrapeau());
+                menu.setNbDrapeau(grille.getMines() - grille.getNbDrapeau());
             }
         });
         
@@ -150,8 +145,8 @@ public class VueControleur extends Application {
         });
         
         // création des cases et placement dans la grille
-        for (int i=0;i<dimX;i++) {
-            for(int j=0;j<dimY;j++){
+        for (int i=0;i<grille.getDimX();i++) {
+            for(int j=0;j<grille.getDimY();j++){
                 cases[i][j] = new CaseVue(i,j,this);
                 gPane.add(cases[i][j].getStack(), i, j);
             }    
@@ -165,14 +160,27 @@ public class VueControleur extends Application {
         
         Scene scene = new Scene(border, Color.BLACK);
         menu.setMinWidth(600);
+        primaryStage.setResizable(false);
+        primaryStage.sizeToScene();
         primaryStage.getIcons().add(new Image("images/mine.png"));
-        
         primaryStage.setTitle("D-mineur");
         primaryStage.setScene(scene);
         primaryStage.show();
+        
         menu.placeBouttons((int) gPane.getWidth());
-        if(30*dimX<600){
-            gauche.setMinWidth((600 - 30*dimX)/2);
+        if(30*grille.getDimX()<600){
+            gauche.setMinWidth((600 - 30*grille.getDimX())/2);
+        }
+        
+        if(TimerThread.getState() == Thread.State.NEW){
+            TimerThread.setDaemon(true);
+            TimerThread.start();
+        }
+        else {
+            timer.restart();
+            synchronized (timer){
+                timer.notify();
+            }
         }
     }
     
@@ -192,22 +200,34 @@ public class VueControleur extends Application {
         threads.exec(1,array,grille);
     }
     
-    public void restart(){
-        ArrayList array = new ArrayList();
-        array.add(forme);
-        array.add(dimX);
-        array.add(dimY);
-        array.add(nbMines);
-        threads.exec(2,array,grille);
-        timer.restart();
-        synchronized (timer){
-            timer.notify();
+    public void restart(int diff){
+        if(diff == this.difficulte){
+            ArrayList array = new ArrayList();
+            array.add(grille.getForme());
+            array.add(grille.getDimX());
+            array.add(grille.getDimY());
+            array.add(grille.getMines());
+            threads.exec(2,array,grille);
+            timer.restart();
+            synchronized (timer){
+                timer.notify();
+            }
+        }
+        else{
+            this.difficulte = diff;
+            this.primaryStage.close();
+            start(new Stage());
         }
     }
 
     public int getNbMines() {
-        return nbMines;
+        return grille.getMines();
     }
+
+    public int getDifficulte() {
+        return difficulte;
+    }
+    
     
     
 
@@ -215,6 +235,7 @@ public class VueControleur extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        
         launch(args);
     }
     

@@ -5,7 +5,6 @@
  */
 package VueControler;
 
-import Modele.Grille;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.image.Image;

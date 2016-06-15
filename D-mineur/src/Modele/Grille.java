@@ -31,7 +31,6 @@ public class Grille  extends Observable{
 
     public Grille(int forme, int dimX,int dimY, int mines) {
         this.gameState = -1; // -1:pas démarré ;0: en cours; 1: victoire; 2: défaite
-        this.time = 0;
         this.nbDrapeau = 0;
         this.cases = new Case[dimX][dimY];
         this.forme = forme;
@@ -215,7 +214,7 @@ public class Grille  extends Observable{
     
     public void afficheMines(){
         for(int i=0;i<this.getDimX();i++){
-            for(int j=0;j<this.getDimX();j++){
+            for(int j=0;j<this.getDimY();j++){
                 if(this.cases[i][j].isMine()){
                     if(this.cases[i][j].getEtat()==2){
                         this.cases[i][j].setEtat(5);
@@ -230,7 +229,7 @@ public class Grille  extends Observable{
         if(this.gameState==0){
             int nbCasesCliquee = 0;
             for(int i=0;i<this.dimX;i++){
-                for(int j=0;j<this.dimX;j++){
+                for(int j=0;j<this.dimY;j++){
                     if(this.cases[i][j].getEtat() != 0 && this.cases[i][j].getEtat() != 2){
                         nbCasesCliquee++;
                     }
@@ -260,4 +259,14 @@ public class Grille  extends Observable{
         setChanged();
         notifyObservers();
     }
+
+    public int getMines() {
+        return mines;
+    }
+
+    public int getForme() {
+        return forme;
+    }
+    
+    
 }
