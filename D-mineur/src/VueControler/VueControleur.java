@@ -85,7 +85,7 @@ public class VueControleur extends Application {
                                 c.setVisibleMine(false);
                                 c.setVisibleDrapeau(false);
                                 break;
-                            case 4:layer.setFill(Color.GREY);
+                            case 4:layer.setFill(Color.RED);
                                 c.setVisibleMineR(false);
                                 c.setVisibleMine(true);
                                 c.setVisibleDrapeau(false);
