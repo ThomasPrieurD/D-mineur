@@ -66,7 +66,7 @@ public class Timer extends Observable implements Runnable{
     public void restart(){
         this.sec = 0;
         this.min = 0;
-        this.active = true;
+        this.active = false;
         setChanged();
         notifyObservers();
     }
