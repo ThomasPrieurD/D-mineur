@@ -24,6 +24,7 @@ public class Grille  extends Observable{
     private int dimY;
     private int mines;
     private int nbDrapeau;
+    private int nbVoisins;  //nombre de voisins d'une case
     
     private int gameState;
     
@@ -33,6 +34,10 @@ public class Grille  extends Observable{
         this.nbDrapeau = 0;
         this.cases = new Case[dimX][dimY];
         this.forme = forme;
+        switch(forme){
+            case 1: nbVoisins = 12;
+            default: nbVoisins = 8;
+        }
         this.dimX = dimX;
         this.dimY = dimY;
         this.mines = min(mines,dimX*dimY-9);
@@ -240,7 +245,7 @@ public class Grille  extends Observable{
         this.cases[x][y].setEtat(1);
         Position pos;
         int mineVois = 0;
-        for (int i=0; i<8; i++){
+        for (int i=0; i<nbVoisins; i++){
             if(voisins(x,y,i) != null){
                 pos = voisins(x,y,i);
                 if (cases[pos.getX()][pos.getY()].isMine())
@@ -249,7 +254,7 @@ public class Grille  extends Observable{
         }
         cases[x][y].setNbMineVois(mineVois);
         if (mineVois == 0){
-            for (int i=0; i<8; i++){
+            for (int i=0; i<nbVoisins; i++){
                 if(voisins(x,y,i) != null){
                     pos = voisins(x,y,i);
                     if (cases[pos.getX()][pos.getY()].getEtat() == 0 ){
