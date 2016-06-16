@@ -26,7 +26,6 @@ public class Grille  extends Observable{
     private int nbDrapeau;
     
     private int gameState;
-    private int time;
     
 
     public Grille(int forme, int dimX,int dimY, int mines) {
@@ -75,6 +74,7 @@ public class Grille  extends Observable{
         switch(forme){
             case 0: vois = voisinsRect(x,y,numVoisin);
                 break;
+            case 1: vois = voisinsTri(x,y,numVoisin);
             default : vois = null;
         }
         return vois;
@@ -118,6 +118,99 @@ public class Grille  extends Observable{
         else return new Position(posX,posY);
     }
     
+    public Position voisinsTri(int x,int y,int numVoisin){
+        int posX,posY;
+        if (x%2 == y%2){
+            switch(numVoisin){
+                case 0: posX = x-1;
+                        posY = y-1;
+                    break;
+                case 1: posX = x;
+                        posY = y-1;
+                    break;
+                case 2: posX = x;
+                        posY = y-2;
+                    break;
+                case 3: posX = x+1;
+                        posY = y-2;
+                    break;
+                case 4: posX = x+1;
+                        posY = y-1;
+                    break;
+                case 5: posX = x+1;
+                        posY = y;
+                    break;
+                case 6: posX = x+1;
+                        posY = y+1;
+                    break;
+                case 7: posX = x+1;
+                        posY = y+2;
+                    break;
+                case 8: posX = x;
+                        posY = y+2;
+                    break;
+                case 9: posX = x;
+                        posY = y+1;
+                    break;
+                case 10: posX = x-1;
+                        posY = y+1;
+                    break;
+                case 11: posX = x+1;
+                        posY = y;
+                    break;
+                default : posX = -1;
+                          posY = -1;
+                    break;
+            }
+        }
+        else{
+            switch(numVoisin){
+                case 0: posX = x-1;
+                        posY = y-2;
+                    break;
+                case 1: posX = x;
+                        posY = y-2;
+                    break;
+                case 2: posX = x;
+                        posY = y-1;
+                    break;
+                case 3: posX = x+1;
+                        posY = y-1;
+                    break;
+                case 4: posX = x+1;
+                        posY = y;
+                    break;
+                case 5: posX = x+1;
+                        posY = y+1;
+                    break;
+                case 6: posX = x;
+                        posY = y+1;
+                    break;
+                case 7: posX = x;
+                        posY = y+2;
+                    break;
+                case 8: posX = x-1;
+                        posY = y+2;
+                    break;
+                case 9: posX = x-1;
+                        posY = y+1;
+                    break;
+                case 10: posX = x-1;
+                        posY = y;
+                    break;
+                case 11: posX = x-1;
+                        posY = y-1;
+                    break;
+                default : posX = -1;
+                          posY = -1;
+                    break;
+            }
+        }
+        if(posX<0 || posY<0 || posX>=this.dimX || posY>=this.dimY )
+            return null;
+        else return new Position(posX,posY);
+    }
+    
     
     public void clicG(int x,int y){
         if(this.getGameState() == -1){
@@ -131,7 +224,6 @@ public class Grille  extends Observable{
                     afficheMines();
                     
                     this.cases[x][y].setEtat(3);
-                    this.gameState = 2;
                 }
                 else{
                     clicGRec(x,y);
@@ -244,7 +336,6 @@ public class Grille  extends Observable{
     
     public void restart(int forme, int dimX,int dimY, int mines) {
         this.gameState = -1; // -1:pas démarré ;0: en cours; 1: victoire; 2: défaite
-        this.time = 0;
         this.cases = new Case[dimX][dimY];
         this.forme = forme;
         this.nbDrapeau = 0;
