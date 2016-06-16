@@ -22,15 +22,9 @@ public class Timer extends Observable implements Runnable{
         
         this.sec = 0;
         this.min = 0;
-        this.active=true;
+        this.active=false;
 
         while(true) {
-            try {
-                // pause
-                Thread.sleep(999);
-            }
-            catch (InterruptedException ex) {}
-            incr();
             if(!active){
                 synchronized (this){
                     try {
@@ -41,6 +35,13 @@ public class Timer extends Observable implements Runnable{
                 }
 
             }
+            try {
+                // pause
+                Thread.sleep(999);
+            }
+            catch (InterruptedException ex) {}
+            if(active)
+                incr();
             setChanged();
             notifyObservers();
         }
@@ -73,4 +74,10 @@ public class Timer extends Observable implements Runnable{
     public void pause(){
         this.active = false;
     }
+    
+    public void start(){
+        this.active = true;
+    }
+    
+    
 }

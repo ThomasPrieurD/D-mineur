@@ -140,8 +140,14 @@ public class VueControleur extends Application {
                     default : menu.happy();
                         break;
                 }
-                if(grille.getGameState()>0){
+                if(grille.getGameState()!=0){
                     timer.pause();
+                }
+                if(grille.getGameState()==0){
+                    synchronized (timer){
+                        timer.notify();
+                        timer.start();
+                    }
                 }
                 menu.setNbDrapeau(grille.getMines() - grille.getNbDrapeau());
             }
@@ -172,7 +178,6 @@ public class VueControleur extends Application {
         border.setTop(menu);
         border.setCenter(gPane);
         border.setLeft(gauche);
-        //gauche.setMinWidth(50);
         
         if(forme == 0){
             ((GridPane) gPane).setGridLinesVisible(true);
