@@ -16,15 +16,19 @@ public class Timer extends Observable implements Runnable{
     private int sec;
     private int min;
     private boolean active;
+    private boolean stop = true;
+    private Grille grille;
+    
+    public Timer(Grille grille){
+        this.sec = 0;
+        this.min = 0;
+        this.active=true;
+        this.grille=grille;
+    }
     
     @Override
     public void run() {
-        
-        this.sec = 0;
-        this.min = 0;
-        this.active=false;
-
-        while(true) {
+        while(stop) {
             if(!active){
                 synchronized (this){
                     try {
@@ -53,6 +57,9 @@ public class Timer extends Observable implements Runnable{
             this.min++;
             this.sec -= 60;
         }
+        if(60*this.min+this.sec == grille.getTime()){
+            grille.timeOut();
+        }
     }
 
     public int getSec() {
@@ -79,5 +86,7 @@ public class Timer extends Observable implements Runnable{
         this.active = true;
     }
     
-    
+    public void stop(){
+        this.stop = true;
+    }
 }

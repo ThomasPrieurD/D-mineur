@@ -7,11 +7,8 @@ package Modele;
 
 import static java.lang.Math.min;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Observable;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -28,12 +25,20 @@ public class Grille  extends Observable{
     
     private int gameState;
     
+    private int time;
+    
+    private final Timer timer;
+    private final Thread TimerThread;
+    
 
-    public Grille(int forme, int dimX,int dimY, int mines) {
+    public Grille(int forme, int dimX,int dimY, int mines,int time) {
         this.gameState = -1; // -1:pas démarré ;0: en cours; 1: victoire; 2: défaite
         this.nbDrapeau = 0;
         this.cases = new Case[dimX][dimY];
         this.forme = forme;
+        this.time=time;
+        timer = new Timer(this);
+        TimerThread = new Thread (timer);
         
         switch(forme){
             case 1: nbVoisins = 12;
@@ -74,6 +79,17 @@ public class Grille  extends Observable{
                 minesAPlacer--;
             }
         }
+        if(TimerThread.getState() == Thread.State.NEW){
+            TimerThread.setDaemon(true);
+            TimerThread.start();
+        }
+        else {
+            timer.start();
+            synchronized (timer){
+                timer.notify();
+            }
+        }
+       
         this.gameState = 0;
     }
     
@@ -239,6 +255,9 @@ public class Grille  extends Observable{
 
                 }
                 updateEtat();
+                if(this.gameState!=0){
+                    timer.pause();
+                }
                 setChanged();
                 notifyObservers();
             }
@@ -358,6 +377,10 @@ public class Grille  extends Observable{
                 this.cases[i][j] = new Case();
             }
         }
+        timer.restart();
+        synchronized (timer){
+            timer.notify();
+        }
         setChanged();
         notifyObservers();
     }
@@ -369,6 +392,26 @@ public class Grille  extends Observable{
     public int getForme() {
         return forme;
     }
+
+    public Timer getTimer() {
+        return timer;
+    }
+
+    public int getTime() {
+        return time;
+    }
     
+    public void timeOut(){
+        this.gameState = 2;
+        timer.pause();
+        setChanged();
+        notifyObservers();
+    }
     
+    public void closeTimer(){
+        this.timer.stop();
+        synchronized (timer){
+            timer.notify();
+        }
+    }
 }

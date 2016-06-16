@@ -19,7 +19,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -32,8 +31,6 @@ public class VueControleur extends Application {
     
     private Grille grille;
     private CaseVue[][] cases;
-    private final Timer timer = new Timer();
-    private final Thread TimerThread = new Thread (timer);
     private final Threads threads = new Threads();
     private int difficulte = 1;
     private int forme = 0;
@@ -46,17 +43,17 @@ public class VueControleur extends Application {
         
         // initialisation du modèle que l'on souhaite utiliser
         switch(difficulte){
-            case 1 :grille = new Grille(forme,10,10,10);
+            case 1 :grille = new Grille(forme,10,10,10,-1);
                 break;
-            case 2 :grille = new Grille(forme,30,15,70);
+            case 2 :grille = new Grille(forme,30,15,70,-1);
                 break;
-            case 3 :grille = new Grille(forme,40,20,150);
+            case 3 :grille = new Grille(forme,40,20,150,-1);
+                break;
+            case 4 :grille = new Grille(forme,40,20,150,180);
                 break;
         }
         
         this.cases = new CaseVue[grille.getDimX()][grille.getDimY()];
-        
-        
         
         // gestion du placement (permet de palcer le champ Text affichage en haut, et GridPane gPane au centre)
         BorderPane border = new BorderPane();
@@ -72,6 +69,10 @@ public class VueControleur extends Application {
         }
         gPane.setStyle("-fx-background-color: #000000;");
         Menu menu = new Menu(this);
+        if(grille.getTime()>0){
+            int tempsRest = grille.getTime() - (60*grille.getTimer().getMin() + grille.getTimer().getSec());
+            menu.setTime(tempsRest/60,tempsRest%60);
+        }
         Pane gauche = new Pane();
         gauche.setStyle("-fx-background-color: #000000;");
         
@@ -140,24 +141,26 @@ public class VueControleur extends Application {
                     default : menu.happy();
                         break;
                 }
-                if(grille.getGameState()!=0){
-                    timer.pause();
-                }
-                if(grille.getGameState()==0){
-                    synchronized (timer){
-                        timer.notify();
-                        timer.start();
-                    }
-                }
                 menu.setNbDrapeau(grille.getMines() - grille.getNbDrapeau());
             }
         });
         
-        timer.addObserver(new Observer() {
+        grille.getTimer().addObserver(new Observer() {
             
             @Override
             public void update(Observable o, Object arg) {
-                menu.setTime(timer.getMin(),timer.getSec());
+                if(grille.getTime()>0){
+                    int tempsRest = grille.getTime() - (60*grille.getTimer().getMin() + grille.getTimer().getSec());
+                    menu.setTime(tempsRest/60,tempsRest%60);
+                    if(tempsRest/60==0 && tempsRest%60==0){
+                        menu.colorTimer(Color.RED);
+                    }
+                    else {
+                        menu.colorTimer(Color.WHITE);
+                    }
+                } else {
+                    menu.setTime(grille.getTimer().getMin(),grille.getTimer().getSec());
+                }
             }
         });
         
@@ -203,16 +206,6 @@ public class VueControleur extends Application {
         if(32*((grille.getDimX()/2))+15<600 && this.forme == 1){
             gauche.setMinWidth((600 - (32*((grille.getDimX()/2))+15))/2);
         }
-        if(TimerThread.getState() == Thread.State.NEW){
-            TimerThread.setDaemon(true);
-            TimerThread.start();
-        }
-        else {
-            timer.restart();
-            synchronized (timer){
-                timer.notify();
-            }
-        }
     }
     
     public void clicG(int i,int j){
@@ -239,14 +232,12 @@ public class VueControleur extends Application {
             array.add(grille.getDimY());
             array.add(grille.getMines());
             threads.exec(2,array,grille);
-            timer.restart();
-            synchronized (timer){
-                timer.notify();
-            }
+            
         }
         else{
             this.difficulte = diff;
             this.forme = forme2;
+            this.grille.closeTimer();
             this.primaryStage.close();
             start(new Stage());
         }

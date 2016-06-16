@@ -66,7 +66,8 @@ public class Menu extends Pane{
         dif.getItems().addAll(
                     "facile",//10 * 10 et 10 mines
                     "moyen",//20*20 et 50 mines
-                    "difficile"//20*40 et 100 mines 
+                    "difficile",//20*40 et 100 mines 
+                    "hardcore"//difficile + temps limité(3 minutes);
         );
         switch(controleur.getDifficulte()){
             case 1 : dif.setValue("facile");
@@ -74,6 +75,8 @@ public class Menu extends Pane{
             case 2 : dif.setValue("moyen");
                 break;
             case 3 : dif.setValue("difficile");
+                break;
+            case 4 : dif.setValue("hardcore");
                 break;
         }
         
@@ -108,6 +111,8 @@ public class Menu extends Pane{
                     case "moyen": controleur.restart(2,forme2);
                         break;
                     case "difficile": controleur.restart(3,forme2);
+                        break;
+                    case "hardcore": controleur.restart(4,forme2);
                         break;
                 }
             }
@@ -158,5 +163,9 @@ public class Menu extends Pane{
     
     public void setTime(int min, int sec){
         this.timer.setText(min+" : "+sec);
+    }
+    
+    public void colorTimer(Color color){
+        this.timer.setFill(color);
     }
 }
