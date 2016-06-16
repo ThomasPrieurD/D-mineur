@@ -78,21 +78,35 @@ public class Menu extends Pane{
         
         forme = new ComboBox();
         forme.getItems().addAll(
-                    "rectangle"
+                    "rectangle",
+                    "triangle"
         );
-        forme.setValue("rectangle");
+        switch(controleur.getForme()){
+             case 1 : forme.setValue("triangle");
+                break;
+            default : forme.setValue("rectangle");
+                break;
+        }
+        
         
         this.setStyle("-fx-background-color: #336699;");
         this.getChildren().addAll(newGame,drapeau,nbDrapeau,time,timer,dif,forme);
         
         newGame.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
+                int forme2 = 0;
+                switch((String)forme.getValue()){
+                    case "rectangle": forme2=0;
+                        break;
+                    case "triangle": forme2=1;
+                        break;
+                }
                 switch((String)dif.getValue()){
-                    case "facile": controleur.restart(1);
+                    case "facile": controleur.restart(1,forme2);
                         break;
-                    case "moyen": controleur.restart(2);
+                    case "moyen": controleur.restart(2,forme2);
                         break;
-                    case "difficile": controleur.restart(3);
+                    case "difficile": controleur.restart(3,forme2);
                         break;
                 }
             }

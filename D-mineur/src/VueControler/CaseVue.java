@@ -13,7 +13,9 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -28,24 +30,52 @@ public class CaseVue {
     private final ImageView mine = new ImageView(new Image("images/mine.png"));
     private final ImageView mineR = new ImageView(new Image("images/mineR.png"));
     
-    private Rectangle layer;
+    private Shape layer;
     private Text text;
     private StackPane stack  = new StackPane();
-
-    public CaseVue(Rectangle layer, Text text,int i,int j,VueControleur vuecontrol) {
+    
+    int X;
+    int Y;
+    int forme;
+    public CaseVue(int forme, Text text,int i,int j,VueControleur vuecontrol) {
         drapeau.setFitHeight(25);
         drapeau.setPreserveRatio(true);
         mine.setFitHeight(25);
         mine.setPreserveRatio(true);
         mineR.setFitHeight(25);
         mineR.setPreserveRatio(true);
-        this.layer = layer;
+        
+        this.X = i;
+        this.Y = j;
+        this.forme = forme;
+        
         this.text = text;
         this.text.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
-        this.layer.setArcWidth(10);
-        this.layer.setArcHeight(10);
-        this.layer.setX(i);
-        this.layer.setY(j);
+        
+        if(forme == 0){
+            this.layer = new Rectangle(30, 30, Color.GREY);
+            ((Rectangle) this.layer).setArcWidth(5);
+            ((Rectangle) this.layer).setArcHeight(5);
+        }
+        if(forme == 1){
+            this.layer = new Polygon();
+            if(i%2 == j%2){
+                ((Polygon) layer).getPoints().addAll(new Double[]{
+                    (double)15, (double)0,
+                    (double)0, (double)30,
+                    (double)30, (double)30 });
+            }
+            else {
+                ((Polygon) layer).getPoints().addAll(new Double[]{
+                    (double)-15, (double)0,
+                    (double)15, (double)0,
+                    (double)0, (double)30 });
+            }
+            ((Polygon) layer).setTranslateX(30*i);
+            ((Polygon) layer).setTranslateY(30*j+j);
+            ((Polygon) layer).setFill(Color.GREY);
+        }
+        
         this.text.setFill(Color.DARKBLUE);
         stack.getChildren().addAll(this.layer, this.text,drapeau,mine,mineR);
         StackPane.setMargin(this.text, null);
@@ -57,8 +87,8 @@ public class CaseVue {
         adMouseEvents(this.text,vuecontrol);
     }
     
-    public CaseVue(int i,int j,VueControleur vuecontrol){
-        this(new Rectangle(30, 30, Color.GREY),new Text(0, 0, ""),i,j,vuecontrol);
+    public CaseVue(int forme,int i,int j,VueControleur vuecontrol){
+        this(forme,new Text(0, 0, ""),i,j,vuecontrol);
     }
     
     public void colorTXt(int number){
@@ -83,13 +113,11 @@ public class CaseVue {
 
             @Override
             public void handle(MouseEvent event) {
-                int indiceX = (int) getLayer().getX();
-                int indiceY = (int)getLayer().getY();
                 if(event.getButton()==MouseButton.PRIMARY){
-                    vuecontrol.clicG(indiceX, indiceY);
+                    vuecontrol.clicG(X, Y);
                 }
                 else{
-                    vuecontrol.clicD(indiceX, indiceY);
+                    vuecontrol.clicD(X, Y);
                 }
             }
 
@@ -113,7 +141,7 @@ public class CaseVue {
     
     
     
-    public Rectangle getLayer() {
+    public Shape getLayer() {
         return layer;
     }
 

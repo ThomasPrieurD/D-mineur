@@ -20,6 +20,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -35,6 +36,7 @@ public class VueControleur extends Application {
     private final Thread TimerThread = new Thread (timer);
     private final Threads threads = new Threads();
     private int difficulte = 1;
+    private int forme = 0;
     private Stage primaryStage;
     
     @Override
@@ -44,11 +46,11 @@ public class VueControleur extends Application {
         
         // initialisation du modèle que l'on souhaite utiliser
         switch(difficulte){
-            case 1 :grille = new Grille(0,10,10,15);
+            case 1 :grille = new Grille(forme,10,10,10);
                 break;
-            case 2 :grille = new Grille(0,30,15,70);
+            case 2 :grille = new Grille(forme,30,15,70);
                 break;
-            case 3 :grille = new Grille(0,40,20,200);
+            case 3 :grille = new Grille(forme,40,20,150);
                 break;
         }
         
@@ -60,7 +62,15 @@ public class VueControleur extends Application {
         BorderPane border = new BorderPane();
         
         // permet de placer les diffrents boutons dans une grille
-        GridPane gPane = new GridPane();
+        Pane gPane;
+        if(grille.getForme() == 1){
+            gPane = new Pane();
+            
+        }
+        else{
+            gPane = new GridPane();
+            ((GridPane) gPane).setGridLinesVisible(true);
+        }
         gPane.setStyle("-fx-background-color: #000000;");
         Menu menu = new Menu(this);
         Pane gauche = new Pane();
@@ -75,11 +85,11 @@ public class VueControleur extends Application {
             @Override
             public void update(Observable o, Object arg) {
                 CaseVue c;
-                Rectangle layer;
+                Shape layer;
                 Text text;
                 for(int i=0;i<grille.getDimX();i++){
                     for(int j=0;j<grille.getDimY();j++){
-                        layer = (Rectangle)cases[i][j].getLayer();
+                        layer = (Shape)cases[i][j].getLayer();
                         text = (Text)cases[i][j].getText();
                         c = cases[i][j];
                         switch(grille.getCase(i, j).getEtat()){
@@ -147,16 +157,29 @@ public class VueControleur extends Application {
         // création des cases et placement dans la grille
         for (int i=0;i<grille.getDimX();i++) {
             for(int j=0;j<grille.getDimY();j++){
-                cases[i][j] = new CaseVue(i,j,this);
-                gPane.add(cases[i][j].getStack(), i, j);
+                cases[i][j] = new CaseVue(grille.getForme(),i,j,this);
+                if(forme == 0){
+                    ((GridPane)gPane).add(cases[i][j].getStack(), i, j);
+                }
+                else if (forme == 1){
+                    ((Pane )gPane).getChildren().addAll(cases[i][j].getStack());
+                }
             }    
         }
         
-        gPane.setGridLinesVisible(true);
+        
         border.setTop(menu);
         border.setCenter(gPane);
         border.setLeft(gauche);
         //gauche.setMinWidth(50);
+        
+        if(forme == 0){
+            ((GridPane) gPane).setGridLinesVisible(true);
+        }
+        else {
+            gPane.setMinWidth(30*grille.getDimX());
+            gPane.setMinHeight(30*grille.getDimY()+grille.getDimY());
+        }
         
         Scene scene = new Scene(border, Color.BLACK);
         menu.setMinWidth(600);
@@ -200,8 +223,8 @@ public class VueControleur extends Application {
         threads.exec(1,array,grille);
     }
     
-    public void restart(int diff){
-        if(diff == this.difficulte){
+    public void restart(int diff,int forme2){
+        if(diff == this.difficulte && forme2 == this.forme){
             ArrayList array = new ArrayList();
             array.add(grille.getForme());
             array.add(grille.getDimX());
@@ -215,6 +238,7 @@ public class VueControleur extends Application {
         }
         else{
             this.difficulte = diff;
+            this.forme = forme2;
             this.primaryStage.close();
             start(new Stage());
         }
@@ -226,6 +250,10 @@ public class VueControleur extends Application {
 
     public int getDifficulte() {
         return difficulte;
+    }
+
+    public int getForme() {
+        return forme;
     }
     
     
