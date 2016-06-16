@@ -39,7 +39,7 @@ public class Grille  extends Observable{
         this.time=time;
         timer = new Timer(this);
         TimerThread = new Thread (timer);
-        
+        TimerThread.setDaemon(true);
         switch(forme){
             case 1: nbVoisins = 12;
                 break;
@@ -80,7 +80,6 @@ public class Grille  extends Observable{
             }
         }
         if(TimerThread.getState() == Thread.State.NEW){
-            TimerThread.setDaemon(true);
             TimerThread.start();
         }
         else {
