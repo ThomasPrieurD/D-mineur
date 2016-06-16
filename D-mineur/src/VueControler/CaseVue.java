@@ -49,7 +49,7 @@ public class CaseVue {
         
         this.text = text;
         this.text.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
-        
+
         if(forme == 0){
             this.layer = new Rectangle(29, 29, Color.GREY);
             ((Rectangle) this.layer).setArcWidth(10);
@@ -60,21 +60,67 @@ public class CaseVue {
         }
         if(forme == 1){
             this.layer = new Polygon();
+            Polygon prevLayer = new Polygon();
             if(i%2 == j%2){
                 ((Polygon) layer).getPoints().addAll(new Double[]{
                     (double)15, (double)0,
                     (double)0, (double)30,
                     (double)30, (double)30 });
+                prevLayer.getPoints().addAll(new Double[]{
+                    (double)0, (double)0,
+                    (double)14, (double)0,
+                    (double)0, (double)30 });
             }
             else {
                 ((Polygon) layer).getPoints().addAll(new Double[]{
                     (double)-15, (double)0,
                     (double)15, (double)0,
                     (double)0, (double)30 });
+                prevLayer.getPoints().addAll(new Double[]{
+                    (double)0, (double)0,
+                    (double)0, (double)30,
+                    (double)15, (double)30 });
             }
+            prevLayer.setTranslateX(-9);
             this.stack.setTranslateX(30*i-14*i);
             this.stack.setTranslateY(30*j+j);
             ((Polygon) layer).setFill(Color.GREY);
+            prevLayer.setFill(Color.TRANSPARENT);
+            if(i>0)
+                stack.getChildren().add(prevLayer);
+            
+            prevLayer.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    if(event.getButton()==MouseButton.PRIMARY){
+
+                        vuecontrol.clicG(X-1, Y);
+                    }
+                    else{
+                        vuecontrol.clicD(X-1, Y);
+                    }
+                }
+
+            });
+            prevLayer.setOnMouseEntered(new EventHandler<MouseEvent>(){
+                @Override
+                public void handle(MouseEvent me){
+                    Shape l = vuecontrol.getCases()[i-1][j].getLayer();
+                    if(l.getFill() == Color.GREY)
+                        l.setFill(Color.LIGHTGREY);
+                }
+            });
+            prevLayer.setOnMouseExited(new EventHandler<MouseEvent>(){
+                @Override
+                public void handle(MouseEvent me){
+                    Shape l = vuecontrol.getCases()[i-1][j].getLayer();
+                    if(l.getFill() == Color.LIGHTGREY)
+                        l.setFill(Color.GREY);
+                }
+            });
+            
+            
+            
             drapeau.setFitHeight(15);
             mine.setFitHeight(15);
             mineR.setFitHeight(15);

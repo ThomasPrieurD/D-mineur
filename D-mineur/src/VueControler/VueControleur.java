@@ -254,6 +254,10 @@ public class VueControleur extends Application {
     public int getForme() {
         return forme;
     }
+
+    public CaseVue[][] getCases() {
+        return cases;
+    }
     
     
     
