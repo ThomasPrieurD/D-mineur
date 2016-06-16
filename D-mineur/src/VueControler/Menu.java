@@ -28,7 +28,7 @@ import javafx.scene.text.Text;
 public class Menu extends Pane{
     
     private Image happy = new Image("images/happy.png");
-    private Image dodo = new Image("images/dodo.jpg");
+    private Image dodo = new Image("images/dodo.png");
     private Image sad = new Image("images/sad.png");
     private Image swag = new Image("images/swag.png");
     private ImageView drapeau = new ImageView(new Image("images/drapeau.png"));
