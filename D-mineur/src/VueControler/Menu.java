@@ -28,11 +28,12 @@ import javafx.scene.text.Text;
 public class Menu extends Pane{
     
     private Image happy = new Image("images/happy.png");
+    private Image dodo = new Image("images/dodo.jpg");
     private Image sad = new Image("images/sad.png");
     private Image swag = new Image("images/swag.png");
     private ImageView drapeau = new ImageView(new Image("images/drapeau.png"));
     private ImageView time = new ImageView(new Image("images/horloge.jpg"));
-    private ImageView smiley = new ImageView(happy);
+    private ImageView smiley = new ImageView(dodo);
     private Button newGame = new Button("",smiley);
     
     private Text nbDrapeau;
@@ -141,6 +142,10 @@ public class Menu extends Pane{
     }
     public void sad(){
         smiley.setImage(sad);
+    }
+    
+    public void dodo(){
+        smiley.setImage(dodo);
     }
     
     public void swag(){

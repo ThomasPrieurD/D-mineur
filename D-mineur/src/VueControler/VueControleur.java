@@ -69,7 +69,6 @@ public class VueControleur extends Application {
         }
         else{
             gPane = new GridPane();
-            ((GridPane) gPane).setGridLinesVisible(true);
         }
         gPane.setStyle("-fx-background-color: #000000;");
         Menu menu = new Menu(this);
@@ -132,6 +131,8 @@ public class VueControleur extends Application {
                     }
                 }
                 switch(grille.getGameState()){
+                    case -1 : menu.dodo();
+                        break;
                     case 1 : menu.swag();
                         break;
                     case 2 : menu.sad();
@@ -191,10 +192,12 @@ public class VueControleur extends Application {
         primaryStage.show();
         
         menu.placeBouttons((int) gPane.getWidth());
-        if(30*grille.getDimX()<600){
+        if(30*grille.getDimX()<600 && this.forme == 0){
             gauche.setMinWidth((600 - 30*grille.getDimX())/2);
         }
-        
+        if((30*(grille.getDimX()/2))<600 && this.forme == 1){
+            gauche.setMinWidth((600 - (30*(grille.getDimX()/2)))/2);
+        }
         if(TimerThread.getState() == Thread.State.NEW){
             TimerThread.setDaemon(true);
             TimerThread.start();

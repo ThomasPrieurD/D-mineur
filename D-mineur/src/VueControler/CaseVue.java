@@ -38,11 +38,9 @@ public class CaseVue {
     int Y;
     int forme;
     public CaseVue(int forme, Text text,int i,int j,VueControleur vuecontrol) {
-        drapeau.setFitHeight(25);
+        
         drapeau.setPreserveRatio(true);
-        mine.setFitHeight(25);
         mine.setPreserveRatio(true);
-        mineR.setFitHeight(25);
         mineR.setPreserveRatio(true);
         
         this.X = i;
@@ -53,9 +51,12 @@ public class CaseVue {
         this.text.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
         
         if(forme == 0){
-            this.layer = new Rectangle(30, 30, Color.GREY);
-            ((Rectangle) this.layer).setArcWidth(5);
-            ((Rectangle) this.layer).setArcHeight(5);
+            this.layer = new Rectangle(29, 29, Color.GREY);
+            ((Rectangle) this.layer).setArcWidth(10);
+            ((Rectangle) this.layer).setArcHeight(10);
+            drapeau.setFitHeight(25);
+            mine.setFitHeight(25);
+            mineR.setFitHeight(25);
         }
         if(forme == 1){
             this.layer = new Polygon();
@@ -71,9 +72,12 @@ public class CaseVue {
                     (double)15, (double)0,
                     (double)0, (double)30 });
             }
-            ((Polygon) layer).setTranslateX(30*i);
-            ((Polygon) layer).setTranslateY(30*j+j);
+            this.stack.setTranslateX(30*i-14*i);
+            this.stack.setTranslateY(30*j+j);
             ((Polygon) layer).setFill(Color.GREY);
+            drapeau.setFitHeight(15);
+            mine.setFitHeight(15);
+            mineR.setFitHeight(15);
         }
         
         this.text.setFill(Color.DARKBLUE);
@@ -110,10 +114,10 @@ public class CaseVue {
     
     public void adMouseEvents(Node node,VueControleur vuecontrol){
         node.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
             @Override
             public void handle(MouseEvent event) {
                 if(event.getButton()==MouseButton.PRIMARY){
+                    
                     vuecontrol.clicG(X, Y);
                 }
                 else{
