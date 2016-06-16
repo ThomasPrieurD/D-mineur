@@ -34,9 +34,12 @@ public class Grille  extends Observable{
         this.nbDrapeau = 0;
         this.cases = new Case[dimX][dimY];
         this.forme = forme;
+        
         switch(forme){
             case 1: nbVoisins = 12;
+                break;
             default: nbVoisins = 8;
+                break;
         }
         this.dimX = dimX;
         this.dimY = dimY;
@@ -54,9 +57,12 @@ public class Grille  extends Observable{
         ArrayList<Case> casesLibre = new ArrayList<>();
         for(int i=0;i<this.dimX;i++){
             for(int j=0;j<this.dimY;j++){
-                if((i>x+1 || i<x-1) || (j>y+1 || j<y-1)){
-                    casesLibre.add(this.getCase(i,j));
+                if(forme == 0){
+                    if((i>x+1 || i<x-1) || (j>y+1 || j<y-1)){
+                        casesLibre.add(this.getCase(i,j));
+                    }
                 }
+                else casesLibre.add(this.getCase(i,j));
             }
         }
         Random rand = new Random();
@@ -80,6 +86,7 @@ public class Grille  extends Observable{
             case 0: vois = voisinsRect(x,y,numVoisin);
                 break;
             case 1: vois = voisinsTri(x,y,numVoisin);
+                break;
             default : vois = null;
         }
         return vois;
@@ -160,7 +167,7 @@ public class Grille  extends Observable{
                 case 10: posX = x-1;
                         posY = y+1;
                     break;
-                case 11: posX = x+1;
+                case 11: posX = x-1;
                         posY = y;
                     break;
                 default : posX = -1;
@@ -246,7 +253,9 @@ public class Grille  extends Observable{
         Position pos;
         int mineVois = 0;
         for (int i=0; i<nbVoisins; i++){
+            
             if(voisins(x,y,i) != null){
+                System.out.println("jfhsvui");
                 pos = voisins(x,y,i);
                 if (cases[pos.getX()][pos.getY()].isMine())
                     mineVois++;
@@ -258,6 +267,7 @@ public class Grille  extends Observable{
                 if(voisins(x,y,i) != null){
                     pos = voisins(x,y,i);
                     if (cases[pos.getX()][pos.getY()].getEtat() == 0 ){
+                        
                         clicGRec(pos.getX(),pos.getY());
                     }
                 }
