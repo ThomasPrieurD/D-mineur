@@ -57,12 +57,9 @@ public class Grille  extends Observable{
         ArrayList<Case> casesLibre = new ArrayList<>();
         for(int i=0;i<this.dimX;i++){
             for(int j=0;j<this.dimY;j++){
-                if(forme == 0){
-                    if((i>x+1 || i<x-1) || (j>y+1 || j<y-1)){
-                        casesLibre.add(this.getCase(i,j));
-                    }
+                if((i>x+1 || i<x-1) || (j>y+1 || j<y-1)){
+                    casesLibre.add(this.getCase(i,j));
                 }
-                else casesLibre.add(this.getCase(i,j));
             }
         }
         Random rand = new Random();
@@ -255,7 +252,6 @@ public class Grille  extends Observable{
         for (int i=0; i<nbVoisins; i++){
             
             if(voisins(x,y,i) != null){
-                System.out.println("jfhsvui");
                 pos = voisins(x,y,i);
                 if (cases[pos.getX()][pos.getY()].isMine())
                     mineVois++;

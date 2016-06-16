@@ -195,8 +195,8 @@ public class VueControleur extends Application {
         if(30*grille.getDimX()<600 && this.forme == 0){
             gauche.setMinWidth((600 - 30*grille.getDimX())/2);
         }
-        if((30*(grille.getDimX()/2))<600 && this.forme == 1){
-            gauche.setMinWidth((600 - (30*(grille.getDimX()/2)))/2);
+        if(30*((grille.getDimX()/2))+15<600 && this.forme == 1){
+            gauche.setMinWidth((600 - (30*((grille.getDimX()/2))+15))/2);
         }
         if(TimerThread.getState() == Thread.State.NEW){
             TimerThread.setDaemon(true);
