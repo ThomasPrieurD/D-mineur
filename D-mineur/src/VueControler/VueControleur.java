@@ -48,7 +48,7 @@ public class VueControleur extends Application {
                 break;
             case 3 :grille = new Grille(forme,40,20,150,-1);
                 break;
-            case 4 :grille = new Grille(forme,40,20,150,180);
+            case 4 :grille = new Grille(forme,40,20,150,300);
                 break;
         }
         
