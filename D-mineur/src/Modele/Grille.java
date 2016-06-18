@@ -241,16 +241,14 @@ public class Grille  extends Observable{
             this.poseMines(x, y);
         }
         if(this.getGameState() == 0){
-            Position pos;
             if(cases[x][y].getEtat() == 0){
                 if (cases[x][y].isMine()){
                     this.gameState = 2;
                     afficheMines();
-                    
                     this.cases[x][y].setEtat(3);
                 }
                 else{
-                    clicGRec(x,y);
+                    this.cases[x][y].libereCases(this, x, y);
 
                 }
                 updateEtat();
@@ -263,45 +261,9 @@ public class Grille  extends Observable{
         }
     }
     
-    public void clicGRec(int x,int y){
-        this.cases[x][y].setEtat(1);
-        Position pos;
-        int mineVois = 0;
-        for (int i=0; i<nbVoisins; i++){
-            
-            if(voisins(x,y,i) != null){
-                pos = voisins(x,y,i);
-                if (cases[pos.getX()][pos.getY()].isMine())
-                    mineVois++;
-            }
-        }
-        cases[x][y].setNbMineVois(mineVois);
-        if (mineVois == 0){
-            for (int i=0; i<nbVoisins; i++){
-                if(voisins(x,y,i) != null){
-                    pos = voisins(x,y,i);
-                    if (cases[pos.getX()][pos.getY()].getEtat() == 0 ){
-                        
-                        clicGRec(pos.getX(),pos.getY());
-                    }
-                }
-            }
-        }
-    }
-    
     public void clicD(int x,int y){
         if(this.getGameState() == 0){
-            if (this.cases[x][y].getEtat() == 0){
-                this.cases[x][y].setEtat(2);
-                this.nbDrapeau++;
-            }
-            else{
-                if (this.cases[x][y].getEtat() == 2){
-                    this.cases[x][y].setEtat(0);
-                    this.nbDrapeau--;
-                }
-            }
-            updateEtat();
+            this.cases[x][y].drapeau(this);
             setChanged();
             notifyObservers();
         }
@@ -317,6 +279,10 @@ public class Grille  extends Observable{
 
     public int getNbDrapeau() {
         return nbDrapeau;
+    }
+
+    public int getNbVoisins() {
+        return nbVoisins;
     }
     
     
@@ -412,5 +378,9 @@ public class Grille  extends Observable{
         synchronized (timer){
             timer.notify();
         }
+    }
+    
+    public void incrNbDrapeau(){
+        this.nbDrapeau++;
     }
 }
