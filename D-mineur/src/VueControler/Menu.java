@@ -82,13 +82,13 @@ public class Menu extends Pane{
         
         forme = new ComboBox();
         forme.getItems().addAll(
-                    "rectangle",
+                    "carré",
                     "triangle"
         );
         switch(controleur.getForme()){
              case 1 : forme.setValue("triangle");
                 break;
-            default : forme.setValue("rectangle");
+            default : forme.setValue("carré");
                 break;
         }
         
@@ -100,7 +100,7 @@ public class Menu extends Pane{
             @Override public void handle(ActionEvent e) {
                 int forme2 = 0;
                 switch((String)forme.getValue()){
-                    case "rectangle": forme2=0;
+                    case "carré": forme2=0;
                         break;
                     case "triangle": forme2=1;
                         break;

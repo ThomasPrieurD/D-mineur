@@ -48,6 +48,44 @@ public class Case {
         this.nbMineVois = nbMineVois;
     }
     
+    public void drapeau(Grille grille){
+        if(grille.getGameState() == 0){
+            if (this.getEtat() == 0){
+                this.setEtat(2);
+                grille.incrNbDrapeau();
+            }
+            else{
+                if (this.getEtat() == 2){
+                    this.setEtat(0);
+                    grille.incrNbDrapeau();
+                }
+            }
+        }
+    }
     
+    public void libereCases(Grille grille,int x,int y){
+        this.setEtat(1);
+        Position pos;
+        int mineVois = 0;
+        for (int i=0; i<grille.getNbVoisins(); i++){
+            if(grille.voisins(x,y,i) != null){
+                pos = grille.voisins(x,y,i);
+                if (grille.getCases()[pos.getX()][pos.getY()].isMine())
+                    mineVois++;
+            }
+        }
+        grille.getCases()[x][y].setNbMineVois(mineVois);
+        if (mineVois == 0){
+            for (int i=0; i<grille.getNbVoisins(); i++){
+                if(grille.voisins(x,y,i) != null){
+                    pos = grille.voisins(x,y,i);
+                    if (grille.getCases()[pos.getX()][pos.getY()].getEtat() == 0 ){
+                        grille.getCases()[pos.getX()][pos.getY()].libereCases(grille, pos.getX(), pos.getY());
+                    }
+                }
+            }
+        }
+    }
+
     
 }

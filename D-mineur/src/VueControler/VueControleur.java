@@ -8,7 +8,6 @@ package VueControler;
 
 
 import Modele.Grille;
-import Modele.Timer;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
@@ -198,7 +197,6 @@ public class VueControleur extends Application {
         primaryStage.setTitle("D-mineur");
         primaryStage.setScene(scene);
         primaryStage.show();
-        
         menu.placeBouttons((int) gPane.getWidth());
         if(30*grille.getDimX()<600 && this.forme == 0){
             gauche.setMinWidth((600 - 30*grille.getDimX())/2);
