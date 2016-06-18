@@ -43,6 +43,8 @@ public class Grille  extends Observable{
         switch(forme){
             case 1: nbVoisins = 12;
                 break;
+            case 2: nbVoisins = 6;
+                break;
             default: nbVoisins = 8;
                 break;
         }
@@ -99,6 +101,8 @@ public class Grille  extends Observable{
                 break;
             case 1: vois = voisinsTri(x,y,numVoisin);
                 break;
+            case 2: vois = voisinsHexa(x,y,numVoisin);
+                break;
             default : vois = null;
         }
         return vois;
@@ -131,6 +135,40 @@ public class Grille  extends Observable{
                 break;
             case 7: posX = x-1;
                     posY = y;
+                break;
+            default : posX = -1;
+                      posY = -1;
+                break;
+            
+        }
+        if(posX<0 || posY<0 || posX>=this.dimX || posY>=this.dimY )
+            return null;
+        else return new Position(posX,posY);
+    }
+    
+    public Position voisinsHexa(int x,int y,int numVoisin){
+        int posX,posY;
+        int j;
+        if(x%2 == 0) j=-1;
+        else j=1;
+        switch(numVoisin){
+            case 0: posX = x-1;
+                    posY = y;
+                break;
+            case 1: posX = x+1;
+                    posY = y;
+                break;
+            case 2: posX = x;
+                    posY = y+1;
+                break;
+            case 3: posX = x;
+                    posY = y-1;
+                break;
+            case 4: posX = x-1;
+                    posY = y+j;
+                break;
+            case 5: posX = x+1;
+                    posY = y+j;
                 break;
             default : posX = -1;
                       posY = -1;

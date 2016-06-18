@@ -170,7 +170,7 @@ public class VueControleur extends Application {
                 if(forme == 0){
                     ((GridPane)gPane).add(cases[i][j].getStack(), i, j);
                 }
-                else if (forme == 1){
+                else if (forme > 0){
                     ((Pane )gPane).getChildren().addAll(cases[i][j].getStack());
                 }
             }    
@@ -181,12 +181,18 @@ public class VueControleur extends Application {
         border.setCenter(gPane);
         border.setLeft(gauche);
         
-        if(forme == 0){
-            ((GridPane) gPane).setGridLinesVisible(true);
-        }
-        else {
-            gPane.setMinWidth(32*((grille.getDimX()/2))+15);
-            gPane.setMinHeight(30*grille.getDimY()+grille.getDimY());
+        switch (forme) {
+            case 0:
+                ((GridPane) gPane).setGridLinesVisible(true);
+                break;
+            case 1:
+                gPane.setMinWidth(32*((grille.getDimX()/2))+15);
+                gPane.setMinHeight(30*grille.getDimY()+grille.getDimY());
+                break;
+            case 2:
+                gPane.setMinWidth(23*(grille.getDimX()-1)+31);
+                gPane.setMinHeight(30*grille.getDimY()+grille.getDimY()+15);
+                break;
         }
         
         Scene scene = new Scene(border, Color.BLACK);
@@ -198,11 +204,14 @@ public class VueControleur extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
         menu.placeBouttons((int) gPane.getWidth());
-        if(30*grille.getDimX()<600 && this.forme == 0){
+        if(this.forme == 0 && 30*grille.getDimX()<600){
             gauche.setMinWidth((600 - 30*grille.getDimX())/2);
         }
-        if(32*((grille.getDimX()/2))+15<600 && this.forme == 1){
+        if(this.forme == 1 && 32*((grille.getDimX()/2))+15<600){
             gauche.setMinWidth((600 - (32*((grille.getDimX()/2))+15))/2);
+        }
+        if(this.forme == 2 && (23*(grille.getDimX()-1)+31)<600){
+            gauche.setMinWidth((600 - ((23*grille.getDimX()-1)+31))/2);
         }
     }
     
@@ -257,7 +266,13 @@ public class VueControleur extends Application {
         return cases;
     }
     
+    public int getDimX(){
+        return grille.getDimX();
+    }
     
+    public int getDimY(){
+        return grille.getDimY();
+    }
     
 
     /**

@@ -6,6 +6,7 @@
 package VueControler;
 
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -49,7 +50,8 @@ public class CaseVue {
         
         this.text = text;
         this.text.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
-
+        
+        //carrés
         if(forme == 0){
             this.layer = new Rectangle(29, 29, Color.GREY);
             ((Rectangle) this.layer).setArcWidth(10);
@@ -58,9 +60,11 @@ public class CaseVue {
             mine.setFitHeight(25);
             mineR.setFitHeight(25);
         }
+        
+        //triangles
         if(forme == 1){
             this.layer = new Polygon();
-            if(i%2 == j%2){
+            if(X%2 == Y%2){
                 ((Polygon) layer).getPoints().addAll(new Double[]{
                     (double)15, (double)0,
                     (double)0, (double)30,
@@ -72,12 +76,13 @@ public class CaseVue {
                     (double)15, (double)0,
                     (double)0, (double)30 });
             }
-            this.stack.setTranslateX(30*i-14*i);
-            this.stack.setTranslateY(30*j+j);
+            this.stack.setTranslateX(30*X-14*X);
+            this.stack.setTranslateY(30*Y+Y);
             ((Polygon) layer).setFill(Color.GREY);
-            if(i>0){
+            //les stackpane se chevauche, il faut transmettre les évenements souris.
+            if(X>0){
                 Polygon prevLayer = new Polygon();
-                if(i%2 == j%2){
+                if(X%2 == Y%2){
                     prevLayer.getPoints().addAll(new Double[]{
                         (double)0, (double)0,
                         (double)14, (double)0,
@@ -92,7 +97,6 @@ public class CaseVue {
                 prevLayer.setFill(Color.TRANSPARENT);
                 prevLayer.setTranslateX(-8);
                 stack.getChildren().add(prevLayer);
-                
                 prevLayer.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
@@ -109,7 +113,7 @@ public class CaseVue {
                 prevLayer.setOnMouseEntered(new EventHandler<MouseEvent>(){
                     @Override
                     public void handle(MouseEvent me){
-                        Shape l = vuecontrol.getCases()[i-1][j].getLayer();
+                        Shape l = vuecontrol.getCases()[X-1][Y].getLayer();
                         if(l.getFill() == Color.GREY)
                             l.setFill(Color.LIGHTGREY);
                     }
@@ -117,7 +121,7 @@ public class CaseVue {
                 prevLayer.setOnMouseExited(new EventHandler<MouseEvent>(){
                     @Override
                     public void handle(MouseEvent me){
-                        Shape l = vuecontrol.getCases()[i-1][j].getLayer();
+                        Shape l = vuecontrol.getCases()[X-1][Y].getLayer();
                         if(l.getFill() == Color.LIGHTGREY)
                             l.setFill(Color.GREY);
                     }
@@ -127,6 +131,133 @@ public class CaseVue {
             drapeau.setFitHeight(15);
             mine.setFitHeight(15);
             mineR.setFitHeight(15);
+        }
+        
+        //hexagones
+        if(forme == 2){
+            this.layer = new Polygon();
+            ((Polygon) layer).getPoints().addAll(new Double[]{
+                (double)8, (double)0,
+                (double)22, (double)0,
+                (double)30, (double)15,
+                (double)22, (double)30,
+                (double)8, (double)30,
+                (double)0, (double)15 });
+            this.stack.setTranslateX(23*X);
+            if(X%2==0){
+                this.stack.setTranslateY(30*Y+Y);
+            } else {
+                this.stack.setTranslateY(30*Y+Y+15);
+            }
+            ((Polygon) layer).setFill(Color.GREY);
+             if(X>0){
+                 if(Y>0 || X%2 != 0){
+                    Polygon prevLayer = new Polygon();
+                    prevLayer.getPoints().addAll(new Double[]{
+                        (double)0, (double)0,
+                        (double)8, (double)0,
+                        (double)0, (double)15 });
+                    prevLayer.setFill(Color.TRANSPARENT);
+                    stack.getChildren().add(prevLayer);
+                    prevLayer.setTranslateX(-11);
+                    prevLayer.setTranslateY(-8.5);
+                    prevLayer.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            int x,y;
+                            x=X-1;
+                            if(X%2 == 0) y=Y-1;
+                            else y=Y;
+                            if(event.getButton()==MouseButton.PRIMARY){
+
+                                vuecontrol.clicG(x, y);
+                            }
+                            else{
+                                vuecontrol.clicD(x, y);
+                            }
+                        }
+
+                    });
+                    prevLayer.setOnMouseEntered(new EventHandler<MouseEvent>(){
+                        @Override
+                        public void handle(MouseEvent me){
+                            int x,y;
+                            x=X-1;
+                            if(X%2 == 0) y=Y-1;
+                            else y=Y;
+                            Shape l = vuecontrol.getCases()[x][y].getLayer();
+                            if(l.getFill() == Color.GREY)
+                                l.setFill(Color.LIGHTGREY);
+                        }
+                    });
+                    prevLayer.setOnMouseExited(new EventHandler<MouseEvent>(){
+                        @Override
+                        public void handle(MouseEvent me){
+                            int x,y;
+                            x=X-1;
+                            if(X%2 == 0) y=Y-1;
+                            else y=Y;
+                            Shape l = vuecontrol.getCases()[x][y].getLayer();
+                            if(l.getFill() == Color.LIGHTGREY)
+                                l.setFill(Color.GREY);
+                        }
+                    });
+                }
+                if(Y<vuecontrol.getDimY()-1 || X%2 == 0){
+                    Polygon prevLayer = new Polygon();
+                    prevLayer.getPoints().addAll(new Double[]{
+                        (double)0, (double)15,
+                        (double)8, (double)30,
+                        (double)0, (double)30 });
+                    prevLayer.setFill(Color.TRANSPARENT);
+                    stack.getChildren().add(prevLayer);
+                    prevLayer.setTranslateX(-11);
+                    prevLayer.setTranslateY(8.5);
+                    prevLayer.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            int x,y;
+                            x=X-1;
+                            if(X%2 != 0) y=Y+1;
+                            else y=Y;
+                            if(event.getButton()==MouseButton.PRIMARY){
+
+                                vuecontrol.clicG(x, y);
+                            }
+                            else{
+                                vuecontrol.clicD(x, y);
+                            }
+                        }
+                    });
+                    prevLayer.setOnMouseEntered(new EventHandler<MouseEvent>(){
+                        @Override
+                        public void handle(MouseEvent me){
+                            int x,y;
+                            x=X-1;
+                            if(X%2 != 0) y=Y+1;
+                            else y=Y;
+                            Shape l = vuecontrol.getCases()[x][y].getLayer();
+                            if(l.getFill() == Color.GREY)
+                                l.setFill(Color.LIGHTGREY);
+                        }
+                    });
+                    prevLayer.setOnMouseExited(new EventHandler<MouseEvent>(){
+                        @Override
+                        public void handle(MouseEvent me){
+                            int x,y;
+                            x=X-1;
+                            if(X%2 != 0) y=Y+1;
+                            else y=Y;
+                            Shape l = vuecontrol.getCases()[x][y].getLayer();
+                            if(l.getFill() == Color.LIGHTGREY)
+                                l.setFill(Color.GREY);
+                        }
+                    });
+                }
+            }
+            drapeau.setFitHeight(20);
+            mine.setFitHeight(20);
+            mineR.setFitHeight(20);
         }
         
         this.text.setFill(Color.DARKBLUE);

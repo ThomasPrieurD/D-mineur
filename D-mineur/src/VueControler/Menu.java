@@ -83,10 +83,13 @@ public class Menu extends Pane{
         forme = new ComboBox();
         forme.getItems().addAll(
                     "carré",
-                    "triangle"
+                    "triangle",
+                    "hexagone"
         );
         switch(controleur.getForme()){
              case 1 : forme.setValue("triangle");
+                break;
+            case 2 : forme.setValue("hexagone");
                 break;
             default : forme.setValue("carré");
                 break;
@@ -103,6 +106,8 @@ public class Menu extends Pane{
                     case "carré": forme2=0;
                         break;
                     case "triangle": forme2=1;
+                        break;
+                    case "hexagone": forme2=2;
                         break;
                 }
                 switch((String)dif.getValue()){
