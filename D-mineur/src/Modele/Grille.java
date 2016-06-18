@@ -380,7 +380,7 @@ public class Grille  extends Observable{
         }
     }
     
-    public void incrNbDrapeau(){
-        this.nbDrapeau++;
+    public void addNbDrapeau(int n){
+        this.nbDrapeau+=n;
     }
 }

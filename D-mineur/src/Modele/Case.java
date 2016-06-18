@@ -49,16 +49,14 @@ public class Case {
     }
     
     public void drapeau(Grille grille){
-        if(grille.getGameState() == 0){
-            if (this.getEtat() == 0){
-                this.setEtat(2);
-                grille.incrNbDrapeau();
-            }
-            else{
-                if (this.getEtat() == 2){
-                    this.setEtat(0);
-                    grille.incrNbDrapeau();
-                }
+        if (this.getEtat() == 0){
+            this.setEtat(2);
+            grille.addNbDrapeau(1);
+        }
+        else{
+            if (this.getEtat() == 2){
+                this.setEtat(0);
+                grille.addNbDrapeau(-1);
             }
         }
     }
