@@ -367,13 +367,10 @@ public class Grille  extends Observable{
         }
     }
     
-    public void restart(int forme, int dimX,int dimY, int mines) {
+    public void restart() {
         this.gameState = -1; // -1:pas démarré ;0: en cours; 1: victoire; 2: défaite
         this.cases = new Case[dimX][dimY];
-        this.forme = forme;
         this.nbDrapeau = 0;
-        this.dimX = dimX;
-        this.dimY = dimY;
         this.mines = min(mines,dimX*dimY-9);
         for(int i = 0;i<this.dimX;i++){
             for(int j = 0;j<this.dimY;j++){
